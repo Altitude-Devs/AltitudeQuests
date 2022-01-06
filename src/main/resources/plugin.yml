@@ -1,0 +1,9 @@
+name: AltitudeQuests
+version: '${version}'
+main: com.alttd.altitudequests.AltitudeQuests
+api-version: 1.18
+authors: [ Teriuihi ]
+description: A plugin to run quests on a server
+commands:
+  aquest:
+    permission: aquest.use
