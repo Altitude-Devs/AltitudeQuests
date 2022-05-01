@@ -1,6 +1,7 @@
 package com.alttd.altitudequests.commands;
 
 import com.alttd.altitudequests.AQuests;
+import com.alttd.altitudequests.commands.subcommands.CommandCreateScruff;
 import com.alttd.altitudequests.commands.subcommands.CommandHelp;
 import com.alttd.altitudequests.commands.subcommands.CommandReload;
 import com.alttd.altitudequests.config.Config;
@@ -31,7 +32,8 @@ public class CommandManager implements CommandExecutor, TabExecutor {
 
         subCommands = Arrays.asList(
                 new CommandHelp(this),
-                new CommandReload());
+                new CommandReload(),
+                new CommandCreateScruff());
     }
 
     @Override

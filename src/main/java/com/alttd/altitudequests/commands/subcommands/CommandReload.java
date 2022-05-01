@@ -2,6 +2,9 @@ package com.alttd.altitudequests.commands.subcommands;
 
 import com.alttd.altitudequests.commands.SubCommand;
 import com.alttd.altitudequests.config.Config;
+import com.alttd.altitudequests.config.DatabaseConfig;
+import com.alttd.altitudequests.config.LocalConfig;
+import com.alttd.altitudequests.config.MessagesConfig;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
@@ -12,6 +15,9 @@ public class CommandReload extends SubCommand {
     @Override
     public boolean onCommand(CommandSender commandSender, String[] args) {
         Config.reload();
+        DatabaseConfig.reload();
+        MessagesConfig.reload();
+        LocalConfig.reload();
         commandSender.sendMiniMessage("<green>Reloaded AltitudeQuests config.</green>", null);
         return true;
     }
@@ -28,6 +34,6 @@ public class CommandReload extends SubCommand {
 
     @Override
     public String getHelpMessage() {
-        return Config.RELOAD_HELP_MESSAGE;
+        return MessagesConfig.RELOAD_HELP_MESSAGE;
     }
 }

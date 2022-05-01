@@ -2,7 +2,7 @@ package com.alttd.altitudequests.commands.subcommands;
 
 import com.alttd.altitudequests.commands.CommandManager;
 import com.alttd.altitudequests.commands.SubCommand;
-import com.alttd.altitudequests.config.Config;
+import com.alttd.altitudequests.config.MessagesConfig;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ public class CommandHelp extends SubCommand {
 
     @Override
     public boolean onCommand(CommandSender commandSender, String[] args) {
-        commandSender.sendMiniMessage(Config.HELP_MESSAGE_WRAPPER.replaceAll("<commands>", commandManager
+        commandSender.sendMiniMessage(MessagesConfig.HELP_MESSAGE_WRAPPER.replaceAll("<commands>", commandManager
                         .getSubCommands().stream()
                         .filter(subCommand -> commandSender.hasPermission(subCommand.getPermission()))
                         .map(SubCommand::getHelpMessage)
@@ -40,6 +40,6 @@ public class CommandHelp extends SubCommand {
 
     @Override
     public String getHelpMessage() {
-        return Config.HELP_MESSAGE;
+        return MessagesConfig.HELP_MESSAGE;
     }
 }
