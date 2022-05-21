@@ -4,6 +4,7 @@ import com.alttd.altitudequests.commands.SubCommand;
 import com.alttd.altitudequests.config.Config;
 import com.alttd.altitudequests.config.LocalConfig;
 import com.alttd.altitudequests.config.MessagesConfig;
+import com.alttd.altitudequests.util.Logger;
 import com.alttd.altitudequests.util.Utilities;
 import net.kyori.adventure.text.minimessage.Template;
 import net.kyori.adventure.text.minimessage.template.TemplateResolver;
@@ -15,6 +16,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.*;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 
+import java.text.ParseException;
 import java.util.*;
 
 public class CommandCreateScruff extends SubCommand {
@@ -31,8 +33,14 @@ public class CommandCreateScruff extends SubCommand {
             commandSender.sendMiniMessage(getHelpMessage(), null);
             return true;
         }
-        Location location = new Location(world, Double.parseDouble(args[2]),Double.parseDouble(args[3]), Double.parseDouble(args[4]),
-                Float.parseFloat(args[5]), Float.parseFloat(args[6]));
+        Location location;
+        try {
+            location = new Location(world, Double.parseDouble(args[2]), Double.parseDouble(args[3]), Double.parseDouble(args[4]),
+                    Float.parseFloat(args[5]), Float.parseFloat(args[6]));
+        } catch (NumberFormatException exception) {
+            commandSender.sendMiniMessage("<red>Invalid arguments.</red>", null);
+            return true;
+        }
         Wolf wolf = (Wolf) world.spawnEntity(location, EntityType.WOLF, CreatureSpawnEvent.SpawnReason.CUSTOM);
         wolf.setPersistent(true);
         wolf.setInvulnerable(true);
