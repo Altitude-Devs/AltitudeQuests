@@ -1,23 +1,22 @@
 package com.alttd.altitudequests.commands.subcommands;
 
 import com.alttd.altitudequests.commands.SubCommand;
-import com.alttd.altitudequests.config.Config;
 import com.alttd.altitudequests.config.LocalConfig;
 import com.alttd.altitudequests.config.MessagesConfig;
-import com.alttd.altitudequests.util.Logger;
 import com.alttd.altitudequests.util.Utilities;
-import net.kyori.adventure.text.minimessage.Template;
-import net.kyori.adventure.text.minimessage.template.TemplateResolver;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.*;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Wolf;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 
-import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 public class CommandCreateScruff extends SubCommand {
 

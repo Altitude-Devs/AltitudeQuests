@@ -3,7 +3,9 @@ package com.alttd.altitudequests.objects.quests;
 import com.alttd.altitudequests.config.QuestsConfig;
 import com.alttd.altitudequests.objects.MineQuestObject;
 import com.alttd.altitudequests.objects.Quest;
+import com.alttd.altitudequests.objects.QuestCompleteEvent;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 
 import java.util.Optional;
 
@@ -34,11 +36,14 @@ public class MineQuest extends Quest {
         return isDone;
     }
 
-    public void mine(Block block) {
+    public void mine(Block block, Player player) {
         if (!isDone && !block.getType().equals(mineQuestObject.getMaterial()))
             return;
         mined += 1;
-        if (mined == mineQuestObject.getAmount())
+        if (mined == mineQuestObject.getAmount()) {
             isDone = true;
+            QuestCompleteEvent event = new QuestCompleteEvent(player, this, true);
+            event.callEvent();
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.alttd.altitudequests;
 
+import com.alttd.altitudequests.commands.CommandManager;
 import com.alttd.altitudequests.config.Config;
 import com.alttd.altitudequests.config.DatabaseConfig;
 import com.alttd.altitudequests.config.LocalConfig;
@@ -29,6 +30,7 @@ public final class AQuests extends JavaPlugin {
         LocalConfig.reload();
 
         registerEvents();
+        CommandManager commandManager = new CommandManager();
 
         Logger.info("--------------------------------------------------");
         Logger.info("AQuest started");

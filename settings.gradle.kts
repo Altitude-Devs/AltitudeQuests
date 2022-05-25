@@ -1,4 +1,4 @@
-rootProject.name = "AltitudeQuests"
+rootProject.name = "AQuest"
 
 dependencyResolutionManagement {
     repositories {

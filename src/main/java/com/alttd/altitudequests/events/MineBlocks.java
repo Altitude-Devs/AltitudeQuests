@@ -20,7 +20,7 @@ public class MineBlocks implements Listener {
         if (quest == null || quest.isDone())
             return;
         if (quest instanceof MineQuest mineQuest)
-            mineQuest.mine(event.getBlock());
+            mineQuest.mine(event.getBlock(), player);
     }
 
 }

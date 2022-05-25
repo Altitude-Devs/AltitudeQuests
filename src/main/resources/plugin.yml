@@ -1,6 +1,6 @@
-name: AltitudeQuests
+name: AQuests
 version: '${version}'
-main: com.alttd.altitudequests.AltitudeQuests
+main: com.alttd.altitudequests.AQuests
 api-version: 1.18
 authors: [ Teriuihi ]
 description: A plugin to run quests on a server

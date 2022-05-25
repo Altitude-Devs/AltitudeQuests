@@ -18,7 +18,10 @@ public class LocalConfig extends AbstractConfig{
     public static UUID activeNPC = null;
 
     private static void loadActiveNPC() {
-        activeNPC = UUID.fromString(config.getString("active-npc", null));
+        String string = config.getString("active-npc", null);
+        if (string == null)
+            return;
+        activeNPC = UUID.fromString(string);
     }
 
     public static void removeActiveNPC() {
