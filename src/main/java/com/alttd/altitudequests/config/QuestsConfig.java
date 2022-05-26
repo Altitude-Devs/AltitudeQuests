@@ -3,8 +3,8 @@ package com.alttd.altitudequests.config;;
 import com.alttd.altitudequests.objects.MineQuestObject;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.Template;
-import net.kyori.adventure.text.minimessage.template.TemplateResolver;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -45,7 +45,7 @@ public class QuestsConfig extends AbstractConfig {
         for (String key : keys) {
             Material material = Material.valueOf(configurationSection.getString(key + "material"));
 
-            TemplateResolver resolver = TemplateResolver.resolving(Template.template("block", material.name().toLowerCase()));
+            TagResolver resolver = TagResolver.resolver(Placeholder.unparsed("block", material.name().toLowerCase()));
             List<Component> collect = configurationSection.getStringList(key + "pages").stream()
                     .map(page -> miniMessage.deserialize(page, resolver))
                     .collect(Collectors.toList());

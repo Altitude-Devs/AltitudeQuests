@@ -5,8 +5,8 @@ import com.alttd.altitudequests.config.Config;
 import com.alttd.altitudequests.config.LocalConfig;
 import net.kyori.adventure.inventory.Book;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.Template;
-import net.kyori.adventure.text.minimessage.template.TemplateResolver;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -43,7 +43,7 @@ public class TalkToQuest implements Listener {
                 .author(miniMessage.deserialize(Config.QUEST_BOOK_AUTHOR))
                 .title(miniMessage.deserialize(Config.QUEST_BOOK_TITLE))
                 .pages(getPages(player).stream()
-                        .map(page -> miniMessage.deserialize(page, TemplateResolver.templates(Template.template("player", player.getName()))))
+                        .map(page -> miniMessage.deserialize(page, TagResolver.resolver(Placeholder.component("player", player.name()))))
                         .collect(Collectors.toList()))
                 .build();
     }
