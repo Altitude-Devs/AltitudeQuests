@@ -1,13 +1,13 @@
 package com.alttd.altitudequests.util;
 
-import com.alttd.altitudequests.AQuests;
+import com.alttd.altitudequests.AQuest;
 
 public class Logger {
 
     static private final java.util.logging.Logger logger;
 
     static {
-        logger = AQuests.getInstance().getLogger();
+        logger = AQuest.getInstance().getLogger();
     }
 
     public static void info(String info, String... variables)

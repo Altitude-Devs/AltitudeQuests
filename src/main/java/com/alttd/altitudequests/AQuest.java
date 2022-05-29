@@ -9,11 +9,11 @@ import com.alttd.altitudequests.events.TalkToQuest;
 import com.alttd.altitudequests.util.Logger;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public final class AQuests extends JavaPlugin {
+public final class AQuest extends JavaPlugin {
 
-    public static AQuests instance;
+    public static AQuest instance;
 
-    public static AQuests getInstance() {
+    public static AQuest getInstance() {
         return instance;
     }
 

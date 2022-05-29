@@ -22,20 +22,20 @@ public class CommandCreateScruff extends SubCommand {
 
     @Override
     public boolean onCommand(CommandSender commandSender, String[] args) {
-        if (args.length != 8) {
+        if (args.length != 7) {
             commandSender.sendMiniMessage(getHelpMessage(), null);
             return true;
         }
 
-        World world = Bukkit.getServer().getWorld(args[7]);
+        World world = Bukkit.getServer().getWorld(args[6]);
         if (world == null) {
             commandSender.sendMiniMessage(getHelpMessage(), null);
             return true;
         }
         Location location;
         try {
-            location = new Location(world, Double.parseDouble(args[2]), Double.parseDouble(args[3]), Double.parseDouble(args[4]),
-                    Float.parseFloat(args[5]), Float.parseFloat(args[6]));
+            location = new Location(world, Double.parseDouble(args[1]), Double.parseDouble(args[2]), Double.parseDouble(args[3]),
+                    Float.parseFloat(args[4]), Float.parseFloat(args[5]));
         } catch (NumberFormatException exception) {
             commandSender.sendMiniMessage("<red>Invalid arguments.</red>", null);
             return true;
@@ -48,11 +48,13 @@ public class CommandCreateScruff extends SubCommand {
         wolf.setAI(false);
         wolf.setCollarColor(DyeColor.MAGENTA);
         wolf.setCustomNameVisible(true);
-        wolf.customName(getMiniMessage().deserialize("Scruff"));
+        wolf.customName(getMiniMessage().deserialize("<magenta>Scruff</magenta>"));
+        wolf.setSitting(true);
 
         UUID uuid = wolf.getUniqueId();
 
         LocalConfig.setActiveNPC(uuid);
+        commandSender.sendMiniMessage("<green>Spawned Scruff</green>", null);
         return true;
     }
 

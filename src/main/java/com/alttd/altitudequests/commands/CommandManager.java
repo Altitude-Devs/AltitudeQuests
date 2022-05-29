@@ -1,6 +1,6 @@
 package com.alttd.altitudequests.commands;
 
-import com.alttd.altitudequests.AQuests;
+import com.alttd.altitudequests.AQuest;
 import com.alttd.altitudequests.commands.subcommands.CommandCreateScruff;
 import com.alttd.altitudequests.commands.subcommands.CommandHelp;
 import com.alttd.altitudequests.commands.subcommands.CommandReload;
@@ -19,9 +19,9 @@ public class CommandManager implements CommandExecutor, TabExecutor {
     private final List<SubCommand> subCommands;
 
     public CommandManager() {
-        AQuests aQuests = AQuests.getInstance();
+        AQuest aQuest = AQuest.getInstance();
 
-        PluginCommand command = aQuests.getCommand("aquest");
+        PluginCommand command = aQuest.getCommand("aquest");
         if (command == null) {
             subCommands = null;
             Logger.severe("Unable to find AltitudeQuests command.");

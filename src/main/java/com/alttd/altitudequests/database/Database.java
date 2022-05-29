@@ -1,6 +1,6 @@
 package com.alttd.altitudequests.database;
 
-import com.alttd.altitudequests.AQuests;
+import com.alttd.altitudequests.AQuest;
 import com.alttd.altitudequests.config.DatabaseConfig;
 import com.alttd.altitudequests.util.Logger;
 import org.bukkit.Bukkit;
@@ -75,7 +75,7 @@ public class Database {
             e.printStackTrace();
             Logger.severe("Error while trying to create user point table");
             Logger.severe("Shutting down AltitudeQuests");
-            Bukkit.getPluginManager().disablePlugin(AQuests.getInstance());
+            Bukkit.getPluginManager().disablePlugin(AQuest.getInstance());
         }
     }
 

@@ -9,7 +9,7 @@ public class QuestComplete implements Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onQuestComplete(QuestCompleteEvent event) {
-        event.getPlayer().sendMiniMessage("<green>You completed a quest gj.</green>", null);
+        event.getPlayer().sendMiniMessage("<green>You completed a quest gj. - DEBUG</green>", null);
     }
 
 }

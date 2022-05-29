@@ -18,7 +18,7 @@ public abstract class SubCommand {
     public abstract String getName();
 
     public String getPermission() {
-        return "aquests." + getName();
+        return "aquest." + getName();
     }
 
     public abstract List<String> getTabComplete(CommandSender commandSender, String[] args);

@@ -1,6 +1,6 @@
 package com.alttd.altitudequests.config;
 
-import com.alttd.altitudequests.AQuests;
+import com.alttd.altitudequests.AQuest;
 import com.alttd.altitudequests.util.Logger;
 import com.google.common.collect.ImmutableMap;
 import org.bukkit.configuration.ConfigurationSection;
@@ -24,7 +24,7 @@ abstract class AbstractConfig {
     YamlConfiguration yaml;
 
     AbstractConfig(String filename) {
-        init(new File(AQuests.getInstance().getDataFolder(), filename), filename);
+        init(new File(AQuest.getInstance().getDataFolder(), filename), filename);
     }
 
     AbstractConfig(File file, String filename) {
