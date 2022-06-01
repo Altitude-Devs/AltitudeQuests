@@ -1,40 +1,48 @@
 package com.alttd.altitudequests.objects;
 
-import com.alttd.altitudequests.config.QuestsConfig;
+import com.alttd.altitudequests.AQuest;
+import com.alttd.altitudequests.config.Config;
 import com.alttd.altitudequests.objects.quests.MineQuest;
+import com.alttd.altitudequests.util.Logger;
+import com.alttd.altitudequests.util.Utilities;
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.HashMap;
-import java.util.Random;
-import java.util.UUID;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 
 public abstract class Quest {
 
     private static final HashMap<UUID, Quest> dailyQuests = new HashMap<>();
     private static Quest weeklyQuest = null;
-    private static final String[] possibleQuests;
+    private static final List<Class<? extends Quest>> possibleQuests = new ArrayList<>();
 
     //TODO add all data every quest needs
 
     static {
-        possibleQuests = new String[]{"MineQuest"};
-    }
-
-    public Quest() {
+        possibleQuests.add(MineQuest.class);
     }
 
     public static void createDailyQuest(Player player) {
-        Random random = new Random();
-        String questName = possibleQuests[random.nextInt(0, possibleQuests.length - 1)];
-        Quest quest = null;
-        switch (questName) {
-            case "MineQuest" -> {
-                quest = new MineQuest(QuestsConfig.MINE_QUESTS.get(random.nextInt(0, QuestsConfig.MINE_QUESTS.size() - 1)));
-            }
+        if (possibleQuests.size() == 0) {
+            player.sendMiniMessage("<red>Unable to create quest, no quests in config</red>", null);
+            return;
         }
-        if (quest == null)
-            return; //TODO error
-        dailyQuests.put(player.getUniqueId(), quest);
+
+        Class<? extends Quest> questClass = possibleQuests.get(Utilities.randomOr0(possibleQuests.size() - 1));
+        try {
+            Constructor<? extends Quest> constructor = questClass.getDeclaredConstructor(UUID.class);
+            dailyQuests.put(player.getUniqueId(), constructor.newInstance(player.getUniqueId()));
+        } catch (InvocationTargetException | IllegalAccessException | InstantiationException | NoSuchMethodException e) {
+            player.sendMiniMessage("<red>Unable to create quest, contact an admin</red>", null);
+            e.printStackTrace();
+            Logger.severe("% does not have a constructor with a UUID input or has improper access.", questClass.getName());
+        }
     }
 
     public static Quest getDailyQuest(UUID uuid) {
@@ -48,5 +56,48 @@ public abstract class Quest {
         Quest.weeklyQuest = newQuest;
     }
 
+    private static HashSet<UUID> queriedUsers = new HashSet<>();
+    public static void tryLoadDailyQuest(UUID uuid) { //TODO set up a way to listen to the response and load stuff
+        if (queriedUsers.contains(uuid) || dailyQuests.containsKey(uuid))
+            return;
+        queriedUsers.add(uuid);
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                ByteArrayDataOutput out = ByteStreams.newDataOutput();
+                out.writeUTF("try-lock");
+                out.writeUTF(uuid.toString());
+                Bukkit.getServer().sendPluginMessage(AQuest.getInstance(),
+                        "aquest:player-data",
+                        out.toByteArray());
+                if (Config.DEBUG)
+                    Logger.info("Send lock request for %", uuid.toString());
+            }
+        }.runTaskAsynchronously(AQuest.getInstance());
+    }
+
+    public static void unloadUser(UUID uuid) {
+        queriedUsers.remove(uuid);
+        Quest quest = dailyQuests.remove(uuid);
+        if (quest == null)
+            return;
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                quest.save();
+            }
+        }.runTaskAsynchronously(AQuest.getInstance());
+    }
+
+    protected abstract void save();
+
     public abstract boolean isDone();
+
+    public abstract String getName();
+
+    public abstract List<String> getPages();
+
+    public abstract TagResolver getTagResolvers();
+
+    public abstract int turnIn(Player player);
 }

@@ -42,4 +42,9 @@ public class CommandHelp extends SubCommand {
     public String getHelpMessage() {
         return MessagesConfig.HELP_MESSAGE;
     }
+
+    @Override
+    public boolean shouldTabComplete() {
+        return true;
+    }
 }

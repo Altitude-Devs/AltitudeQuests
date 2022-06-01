@@ -28,4 +28,6 @@ public abstract class SubCommand {
     protected MiniMessage getMiniMessage() {
         return miniMessage;
     }
+
+    public abstract boolean shouldTabComplete();
 }

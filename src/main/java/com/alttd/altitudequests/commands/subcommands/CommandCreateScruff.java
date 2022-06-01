@@ -55,7 +55,7 @@ public class CommandCreateScruff extends SubCommand {
 
         LocalConfig.setActiveNPC(uuid);
         commandSender.sendMiniMessage("<green>Spawned Scruff</green>", null);
-        return true;
+        return true; //TODO make sure scruff can't be put in boats or killed
     }
 
     @Override
@@ -104,5 +104,10 @@ public class CommandCreateScruff extends SubCommand {
     @Override
     public String getHelpMessage() {
         return MessagesConfig.CREATE_SCRUFF_MESSAGE;
+    }
+
+    @Override
+    public boolean shouldTabComplete() {
+        return true;
     }
 }

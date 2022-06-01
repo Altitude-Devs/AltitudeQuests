@@ -5,6 +5,9 @@ import com.alttd.altitudequests.config.DatabaseConfig;
 import com.alttd.altitudequests.util.Logger;
 import org.bukkit.Bukkit;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -12,11 +15,9 @@ import java.sql.SQLException;
 public class Database {
 
     private static Database instance = null;
-    public static Connection connection = null;
+    private Connection connection = null;
 
-    private Database() {
-
-    }
+    private Database() {}
 
     public static Database getDatabase(){
         if (instance == null)
@@ -31,8 +32,22 @@ public class Database {
             e.printStackTrace();
         }
 
-        // Tables
-        createUserPointsTable();
+        //Run all create table functions
+        for (Method method : Database.class.getDeclaredMethods()) {
+            if (Modifier.isPrivate(method.getModifiers())) {
+                if (method.getParameterTypes().length == 0 && method.getReturnType() == Void.TYPE) {
+                    try {
+                        method.setAccessible(true);
+                        method.invoke(instance);
+                    } catch (InvocationTargetException ex) {
+                        throw new RuntimeException(ex.getCause());
+                    } catch (Exception ex) {
+                        Logger.severe("Error invoking %.", method.toString());
+                        ex.printStackTrace();
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -61,16 +76,26 @@ public class Database {
         }
     }
 
+    public Connection getConnection() {
+        try {
+            openConnection();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return connection;
+    }
+
     private static void createUserPointsTable() {
         try {
-            String sql = "CREATE TABLE IF NOT EXISTS quest_progress(" +
+            String sql = "CREATE TABLE IF NOT EXISTS generic_quest_progress(" +
                     "uuid VARCHAR(36) NOT NULL, " +
                     "quest VARCHAR(36) NOT NULL, " +
-                    "prepare_progress INT NOT NULL, " +
-                    "turn_in_progress INT NOT NULL, " +
+                    "quest_variant VARCHAR(36) NOT NULL, " +
+                    "step_1_progress INT NOT NULL, " +
+                    "step_2_progress INT NOT NULL, " +
                     "PRIMARY KEY (UUID, quest)" +
                     ")";
-            connection.prepareStatement(sql).executeUpdate();
+            getDatabase().getConnection().prepareStatement(sql).executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
             Logger.severe("Error while trying to create user point table");

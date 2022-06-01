@@ -1,6 +1,5 @@
 package com.alttd.altitudequests.objects;
 
-import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 
 import java.util.List;
@@ -11,9 +10,9 @@ public class MineQuestObject {
     String name;
     Material material;
     int amount;
-    List<Component> pages;
+    List<String> pages;
 
-    public MineQuestObject(String internalName, String name, Material material, int amount, List<Component> pages) {
+    public MineQuestObject(String internalName, String name, Material material, int amount, List<String> pages) {
         this.internalName = internalName;
         this.name = name;
         this.material = material;
@@ -37,7 +36,7 @@ public class MineQuestObject {
         return amount;
     }
 
-    public List<Component> getPages() {
+    public List<String> getPages() {
         return pages;
     }
 }

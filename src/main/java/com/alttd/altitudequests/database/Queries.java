@@ -15,7 +15,7 @@ public class Queries {
         long time;
 
         try {
-            PreparedStatement preparedStatement = Database.connection.prepareStatement(sql);
+            PreparedStatement preparedStatement = Database.getDatabase().getConnection().prepareStatement(sql);
             preparedStatement.setString(1, uuid.toString());
             preparedStatement.setInt(3, progress);
             preparedStatement.setString(4, uuid.toString());

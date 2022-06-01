@@ -35,6 +35,13 @@ public final class Config extends AbstractConfig {
         QUEST_PAGES = config.getStringList("book.pages", QUEST_PAGES);
     }
 
+    public static String TOO_FAR_FROM_NPC = "<red>You are too far from Scruff";//TODO replace scruff with <npc>?
+    public static String DAILY_ALREADY_DONE = "<red>You already completed your daily quest";
+    private static void loadMessages() {
+        TOO_FAR_FROM_NPC = config.getString("messages.too-far-from-npc", TOO_FAR_FROM_NPC);
+        DAILY_ALREADY_DONE = config.getString("messages.daily-already-done", DAILY_ALREADY_DONE);
+    }
+
     private static void loadGUIText() {
     }
 

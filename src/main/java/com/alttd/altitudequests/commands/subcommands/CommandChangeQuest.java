@@ -1,31 +1,23 @@
 package com.alttd.altitudequests.commands.subcommands;
 
-import com.alttd.altitudequests.AQuest;
 import com.alttd.altitudequests.commands.SubCommand;
-import com.alttd.altitudequests.config.*;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class CommandReload extends SubCommand {
-
-    private final AQuest plugin;
-
-    public CommandReload(AQuest plugin) {
-        this.plugin = plugin;
-    }
-
+public class CommandChangeQuest extends SubCommand {
     @Override
     public boolean onCommand(CommandSender commandSender, String[] args) {
-        plugin.reloadConfigs();
-        commandSender.sendMiniMessage("<green>Reloaded AltitudeQuests config.</green>", null);
-        return true;
+        //TODO check if they have money
+        //TODO error return if not, take money if they do
+        //TODO give new quest
+        return false;
     }
 
     @Override
     public String getName() {
-        return "reload";
+        return "change";
     }
 
     @Override
@@ -35,11 +27,11 @@ public class CommandReload extends SubCommand {
 
     @Override
     public String getHelpMessage() {
-        return MessagesConfig.RELOAD_HELP_MESSAGE;
+        return "\b";
     }
 
     @Override
     public boolean shouldTabComplete() {
-        return true;
+        return false;
     }
 }

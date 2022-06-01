@@ -12,7 +12,7 @@ import java.util.UUID;
 
 public class MineBlocks implements Listener {
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onBlockBreak(BlockBreakEvent event) {
         Player player = event.getPlayer();
         UUID uuid = player.getUniqueId();
@@ -20,7 +20,7 @@ public class MineBlocks implements Listener {
         if (quest == null || quest.isDone())
             return;
         if (quest instanceof MineQuest mineQuest)
-            mineQuest.mine(event.getBlock(), player);
+            mineQuest.mine(event.getBlock());
     }
 
 }

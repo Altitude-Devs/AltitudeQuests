@@ -1,11 +1,8 @@
 package com.alttd.altitudequests;
 
 import com.alttd.altitudequests.commands.CommandManager;
-import com.alttd.altitudequests.config.Config;
-import com.alttd.altitudequests.config.DatabaseConfig;
-import com.alttd.altitudequests.config.LocalConfig;
-import com.alttd.altitudequests.config.MessagesConfig;
-import com.alttd.altitudequests.events.TalkToQuest;
+import com.alttd.altitudequests.config.*;
+import com.alttd.altitudequests.events.*;
 import com.alttd.altitudequests.util.Logger;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -24,13 +21,9 @@ public final class AQuest extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        Config.reload();
-        DatabaseConfig.reload();
-        MessagesConfig.reload();
-        LocalConfig.reload();
-
+        reloadConfigs();
         registerEvents();
-        CommandManager commandManager = new CommandManager();
+        new CommandManager();
 
         Logger.info("--------------------------------------------------");
         Logger.info("AQuest started");
@@ -42,7 +35,21 @@ public final class AQuest extends JavaPlugin {
         // Plugin shutdown logic
     }
 
+    public void reloadConfigs() {
+        Config.reload();
+        DatabaseConfig.reload();
+        MessagesConfig.reload();
+        LocalConfig.reload();
+        QuestsConfig.reload();
+    }
+
     private void registerEvents() {
         getServer().getPluginManager().registerEvents(new TalkToQuest(), this);
+        getServer().getPluginManager().registerEvents(new MineBlocks(), this);
+        getServer().getPluginManager().registerEvents(new LoginEvent(), this);
+        getServer().getPluginManager().registerEvents(new LogoutEvent(), this);
+        getServer().getPluginManager().registerEvents(new QuestComplete(), this);
+        getServer().getMessenger().registerOutgoingPluginChannel(this, "aquest:player-data");
+        getServer().getMessenger().registerIncomingPluginChannel(this, "aquest:player-data", new PluginMessageListener());
     }
 }

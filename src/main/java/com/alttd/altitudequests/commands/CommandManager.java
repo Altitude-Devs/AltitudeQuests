@@ -1,9 +1,7 @@
 package com.alttd.altitudequests.commands;
 
 import com.alttd.altitudequests.AQuest;
-import com.alttd.altitudequests.commands.subcommands.CommandCreateScruff;
-import com.alttd.altitudequests.commands.subcommands.CommandHelp;
-import com.alttd.altitudequests.commands.subcommands.CommandReload;
+import com.alttd.altitudequests.commands.subcommands.*;
 import com.alttd.altitudequests.config.Config;
 import com.alttd.altitudequests.util.Logger;
 import org.bukkit.command.*;
@@ -32,8 +30,10 @@ public class CommandManager implements CommandExecutor, TabExecutor {
 
         subCommands = Arrays.asList(
                 new CommandHelp(this),
-                new CommandReload(),
-                new CommandCreateScruff());
+                new CommandReload(AQuest.getInstance()),
+                new CommandCreateScruff(),
+                new CommandChangeQuest(),
+                new CommandTurnIn());
     }
 
     @Override
@@ -65,7 +65,7 @@ public class CommandManager implements CommandExecutor, TabExecutor {
             );
         } else {
             SubCommand subCommand = getSubCommand(args[0]);
-            if (subCommand != null && commandSender.hasPermission(subCommand.getPermission()))
+            if (subCommand != null && subCommand.shouldTabComplete() && commandSender.hasPermission(subCommand.getPermission()))
                 res.addAll(subCommand.getTabComplete(commandSender, args));
         }
         return res;
