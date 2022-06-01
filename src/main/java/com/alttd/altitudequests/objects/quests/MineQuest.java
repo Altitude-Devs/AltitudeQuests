@@ -5,12 +5,12 @@ import com.alttd.altitudequests.database.Database;
 import com.alttd.altitudequests.objects.MineQuestObject;
 import com.alttd.altitudequests.objects.Quest;
 import com.alttd.altitudequests.objects.QuestCompleteEvent;
+import com.alttd.altitudequests.util.Logger;
 import com.alttd.altitudequests.util.Utilities;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 import java.sql.PreparedStatement;
@@ -32,36 +32,38 @@ public class MineQuest extends Quest {
         this.mineQuestObject = QuestsConfig.MINE_QUESTS.get(Utilities.randomOr0(QuestsConfig.MINE_QUESTS.size() - 1));
     }
 
-    public MineQuest(int mined, int turnedIn, String variantInternalName, UUID uuid) {
+    public MineQuest(String variantInternalName, int mined, int turnedIn,  UUID uuid) {
         this.mined = mined;
         this.turnedIn = turnedIn;
         this.uuid = uuid;
         Optional<MineQuestObject> any = QuestsConfig.MINE_QUESTS.stream().filter(object -> variantInternalName.equals(object.getInternalName())).findAny();
         if (any.isEmpty()) {
             this.mineQuestObject = null;
+            Logger.warning("Tried to create MineQuest but unable to find variant: %.", variantInternalName);
             return; //TODO error
         }
         this.mineQuestObject = any.get();
     }
 
     @Override
-    protected void save() {
+    public void save() {
         String sql = "INSERT INTO generic_quest_progress " +
                 "(uuid, quest, quest_variant, step_1_progress, step_2_progress) " +
-                "VALUES (?, ?, ?, ?) " +
-                "ON DUPLICATE KEY UPDATE" +
+                "VALUES (?, ?, ?, ?, ?) " +
+                "ON DUPLICATE KEY UPDATE " +
                     "quest = ?, quest_variant = ?, step_1_progress = ?, step_2_progress = ?";
         try {
             PreparedStatement statement = Database.getDatabase().getConnection().prepareStatement(sql);
             statement.setString(1, uuid.toString());
-            statement.setString(2, getName());
+            statement.setString(2, MineQuest.class.getSimpleName());
             statement.setString(3, mineQuestObject.getInternalName());
             statement.setInt(4, mined);
             statement.setInt(5, turnedIn);
-            statement.setString(6, getName());
+            statement.setString(6, MineQuest.class.getSimpleName());
             statement.setString(7, mineQuestObject.getInternalName());
             statement.setInt(8, mined);
             statement.setInt(9, turnedIn);
+            statement.execute();
         } catch (SQLException exception) {
             exception.printStackTrace();
         }
@@ -70,11 +72,6 @@ public class MineQuest extends Quest {
     @Override
     public boolean isDone() {
         return isDone;
-    }
-
-    @Override
-    public String getName() {
-        return "mining";
     }
 
     @Override

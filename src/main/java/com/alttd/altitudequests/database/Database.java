@@ -21,11 +21,14 @@ public class Database {
 
     public static Database getDatabase(){
         if (instance == null)
+        {
             instance = new Database();
+            instance.init();
+        }
         return (instance);
     }
 
-    public void init() {
+    protected void init() {
         try {
             openConnection();
         } catch (SQLException e) {

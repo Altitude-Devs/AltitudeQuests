@@ -89,11 +89,32 @@ public abstract class Quest {
         }.runTaskAsynchronously(AQuest.getInstance());
     }
 
-    protected abstract void save();
+    public static void saveAll() {
+        for (Quest quest : dailyQuests.values()) {
+            quest.save();
+        }
+    }
+
+    public static void loadDailyQuest(String quest, String quest_variant, int step_1_progress, int step_2_progress, UUID uuid) {
+        Optional<Class<? extends Quest>> any = possibleQuests.stream().filter(q -> q.getSimpleName().equals(quest)).findAny();
+        if (any.isEmpty()) {
+            //TODO error
+            return;
+        }
+        Class<? extends Quest> aClass = any.get();
+        Constructor<? extends Quest> constructor;
+        try {
+            constructor = aClass.getConstructor(String.class, int.class, int.class, UUID.class);
+            Quest quest1 = constructor.newInstance(quest_variant, step_1_progress, step_2_progress, uuid);
+            dailyQuests.put(uuid, quest1);
+        } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public abstract void save();
 
     public abstract boolean isDone();
-
-    public abstract String getName();
 
     public abstract List<String> getPages();
 

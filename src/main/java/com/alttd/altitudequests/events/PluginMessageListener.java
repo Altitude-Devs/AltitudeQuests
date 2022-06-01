@@ -2,6 +2,7 @@ package com.alttd.altitudequests.events;
 
 import com.alttd.altitudequests.AQuest;
 import com.alttd.altitudequests.config.Config;
+import com.alttd.altitudequests.database.Database;
 import com.alttd.altitudequests.objects.Quest;
 import com.alttd.altitudequests.util.Logger;
 import com.google.common.io.ByteArrayDataInput;
@@ -11,6 +12,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.UUID;
 
 public class PluginMessageListener implements org.bukkit.plugin.messaging.PluginMessageListener {
@@ -61,9 +65,27 @@ public class PluginMessageListener implements org.bukkit.plugin.messaging.Plugin
         new BukkitRunnable() {
             @Override
             public void run() {
-                //TODO load user from database
-                //TODO if no quest in database create one
-                System.out.println("creating quest");
+                String sql = "SELECT * FROM generic_quest_progress WHERE uuid = ?";
+                try {
+                    PreparedStatement statement = Database.getDatabase().getConnection().prepareStatement(sql);
+                    statement.setString(1, uuid.toString());
+                    ResultSet resultSet = statement.executeQuery();
+                    if (resultSet.next()) {
+                        Quest.loadDailyQuest(
+                                resultSet.getString("quest"),
+                                resultSet.getString("quest_variant"),
+                                resultSet.getInt("step_1_progress"),
+                                resultSet.getInt("step_2_progress"),
+                                uuid);
+                        if (Config.DEBUG)
+                            Logger.info("Loading daily quest for %", uuid.toString());
+                        return;
+                    }
+                } catch (SQLException exception) {
+                    exception.printStackTrace();
+                }
+                if (Config.DEBUG)
+                    Logger.info("Creating new daily quest for %", uuid.toString());
                 Quest.createDailyQuest(Bukkit.getPlayer(uuid));
             }
         }.runTaskAsynchronously(AQuest.getInstance());
