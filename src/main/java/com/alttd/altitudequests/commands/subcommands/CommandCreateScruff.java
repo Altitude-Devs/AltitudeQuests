@@ -1,6 +1,7 @@
 package com.alttd.altitudequests.commands.subcommands;
 
 import com.alttd.altitudequests.commands.SubCommand;
+import com.alttd.altitudequests.config.Config;
 import com.alttd.altitudequests.config.LocalConfig;
 import com.alttd.altitudequests.config.MessagesConfig;
 import com.alttd.altitudequests.util.Utilities;
@@ -48,14 +49,14 @@ public class CommandCreateScruff extends SubCommand {
         wolf.setAI(false);
         wolf.setCollarColor(DyeColor.MAGENTA);
         wolf.setCustomNameVisible(true);
-        wolf.customName(getMiniMessage().deserialize("<magenta>Scruff</magenta>"));
+        wolf.customName(getMiniMessage().deserialize(Config.NPC_NAME));
         wolf.setSitting(true);
 
         UUID uuid = wolf.getUniqueId();
 
         LocalConfig.setActiveNPC(uuid);
         commandSender.sendMiniMessage("<green>Spawned Scruff</green>", null);
-        return true; //TODO make sure scruff can't be put in boats or killed
+        return true;
     }
 
     @Override

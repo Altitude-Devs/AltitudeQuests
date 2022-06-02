@@ -30,5 +30,6 @@ public class LocalConfig extends AbstractConfig{
 
     public static void setActiveNPC(UUID uuid) {
         config.set("active-npc", uuid.toString());
+        activeNPC = uuid;
     }
 }

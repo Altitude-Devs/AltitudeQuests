@@ -3,49 +3,52 @@ package com.alttd.altitudequests.objects.quests;
 import com.alttd.altitudequests.config.Config;
 import com.alttd.altitudequests.config.QuestsConfig;
 import com.alttd.altitudequests.database.Database;
-import com.alttd.altitudequests.objects.variants.MineQuestObject;
 import com.alttd.altitudequests.objects.Quest;
+import com.alttd.altitudequests.objects.variants.CollectDropsQuestObject;
 import com.alttd.altitudequests.util.Logger;
 import com.alttd.altitudequests.util.Utilities;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
-public class MineQuest extends Quest {
+public class CollectDropsQuest extends Quest {
 
-    private final MineQuestObject mineQuestObject;
+    private final CollectDropsQuestObject collectDropsQuestObject;
 
-    public MineQuest(UUID uuid) {
+    public CollectDropsQuest(UUID uuid) {
         super(uuid, 0, 0,
-            QuestsConfig.MINE_QUESTS.get(Utilities.randomOr0(QuestsConfig.MINE_QUESTS.size() - 1)));
-        if (getVariant() instanceof MineQuestObject mineQuestObject)
-            this.mineQuestObject = mineQuestObject;
+                QuestsConfig.COLLECT_DROPS_QUEST.get(Utilities.randomOr0(QuestsConfig.COLLECT_DROPS_QUEST.size() - 1)));
+        if (getVariant() instanceof CollectDropsQuestObject collectDropsQuestObject)
+            this.collectDropsQuestObject = collectDropsQuestObject;
         else
-            mineQuestObject = null;
-        if (mineQuestObject == null) {
-            Logger.warning("Tried to create MineQuest but unable to find variant: %.", "unknown");
+            this.collectDropsQuestObject = null;
+        if (collectDropsQuestObject == null) {
+            Logger.warning("Tried to create collectDropsQuest but unable to find variant: %.", "unknown");
             return;
         }
     }
 
-    public MineQuest(UUID uuid, int mined, int turnedIn, String variant) {
-        super(uuid, mined, turnedIn, QuestsConfig.MINE_QUESTS.stream()
+    public CollectDropsQuest(UUID uuid, int step1, int step2, String variant) {
+        super(uuid, step1, step2, QuestsConfig.COLLECT_DROPS_QUEST.stream()
                 .filter(object -> variant.equals(object.getInternalName()))
                 .findAny().orElse(null));
-        if (getVariant() instanceof MineQuestObject mineQuestObject)
-            this.mineQuestObject = mineQuestObject;
+        if (getVariant() instanceof CollectDropsQuestObject collectDropsQuestObject)
+            this.collectDropsQuestObject = collectDropsQuestObject;
         else
-            this.mineQuestObject = null;
-        if (mineQuestObject == null) {
-            Logger.warning("Tried to create MineQuest but unable to find variant: %.", variant);
+            this.collectDropsQuestObject = null;
+        if (collectDropsQuestObject == null) {
+            Logger.warning("Tried to create collectDropsQuest but unable to find variant: %.", variant);
             return;
         }
         checkDone();
@@ -57,7 +60,7 @@ public class MineQuest extends Quest {
                 "(year_day, uuid, quest, quest_variant, step_1_progress, step_2_progress) " +
                 "VALUES (?, ?, ?, ?, ?, ?) " +
                 "ON DUPLICATE KEY UPDATE " +
-                    "quest = ?, quest_variant = ?, step_1_progress = ?, step_2_progress = ?, year_day = ?";
+                "quest = ?, quest_variant = ?, step_1_progress = ?, step_2_progress = ?, year_day = ?";
         try {
             PreparedStatement statement = Database.getDatabase().getConnection().prepareStatement(sql);
             int yearDay = Utilities.getYearDay();
@@ -66,11 +69,11 @@ public class MineQuest extends Quest {
             statement.setInt(1, yearDay);
             statement.setString(2, getUuid().toString());
             statement.setString(3, this.getClass().getSimpleName());
-            statement.setString(4, mineQuestObject.getInternalName());
+            statement.setString(4, collectDropsQuestObject.getInternalName());
             statement.setInt(5, getStep1());
             statement.setInt(6, getStep2());
             statement.setString(7, this.getClass().getSimpleName());
-            statement.setString(8, mineQuestObject.getInternalName());
+            statement.setString(8, collectDropsQuestObject.getInternalName());
             statement.setInt(9, getStep1());
             statement.setInt(10, getStep2());
             statement.setInt(11, yearDay);
@@ -83,14 +86,14 @@ public class MineQuest extends Quest {
     @Override
     public TagResolver getTagResolvers() {
         return TagResolver.resolver(
-                Placeholder.unparsed("block", mineQuestObject.getMaterial().name()),
-                Placeholder.parsed("step_1_progress", getStep1() == mineQuestObject.getAmount() ?
+                Placeholder.unparsed("item", collectDropsQuestObject.getMaterial().name()),
+                Placeholder.parsed("step_1_progress", getStep1() == collectDropsQuestObject.getAmount() ?
                         "<green>" + getStep1() + "</green>" : "<red>" + getStep1() + "</red>"),
-                Placeholder.parsed("step_1_total", String.valueOf(mineQuestObject.getAmount())),
-                Placeholder.parsed("step_2_progress", getStep2() == mineQuestObject.getAmount() ?
+                Placeholder.parsed("step_1_total", String.valueOf(collectDropsQuestObject.getAmount())),
+                Placeholder.parsed("step_2_progress", getStep2() == collectDropsQuestObject.getAmount() ?
                         "<green>" + getStep2() + "</green>" : "<red>" + getStep2() + "</red>"),
-                Placeholder.parsed("step_2_total", String.valueOf(mineQuestObject.getAmount()))
-                );
+                Placeholder.parsed("step_2_total", String.valueOf(collectDropsQuestObject.getAmount()))
+        );
     }
 
     @Override
@@ -106,7 +109,7 @@ public class MineQuest extends Quest {
 
         Arrays.stream(inventory.getContents())
                 .filter(Objects::nonNull)
-                .filter(itemStack -> itemStack.getType().equals(mineQuestObject.getMaterial()))
+                .filter(itemStack -> itemStack.getType().equals(collectDropsQuestObject.getMaterial()))
                 .forEach(itemStack -> {
                     if (ref.tmpAmount == 0)
                         return;
@@ -126,13 +129,19 @@ public class MineQuest extends Quest {
 
     @Override
     public Component getDisplayName() {
-        return MiniMessage.miniMessage().deserialize(QuestsConfig.MINE_QUEST_NAME);
+        return MiniMessage.miniMessage().deserialize(QuestsConfig.COLLECT_DROPS_QUEST_NAME);
     }
 
-    public void mine(Block block) {
-        if (isDone() || !block.getType().equals(mineQuestObject.getMaterial()))
+    public void collectDrops(List<ItemStack> drops) {
+        if (isDone())
             return;
-        addStep1(1);
+        int total = drops.stream()
+                .filter(itemStack -> itemStack.getType().equals(collectDropsQuestObject.getMaterial()))
+                .mapToInt(ItemStack::getAmount)
+                .sum();
+        if (total == 0)
+            return;
+        addStep1(total);
         checkDone();
     }
 }

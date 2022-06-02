@@ -36,7 +36,5 @@ public class TalkToQuest implements Listener {
                 inProcess.remove(uniqueId);
             }
         }.runTaskAsynchronously(AQuest.getInstance());
-        //TODO make it so everything can be done with commands and just don't let them tab complete and do them through the book instead
-        //TODO in config allow a multitude of events to be prepared and randomly select from them at certain times of day?
     }
 }

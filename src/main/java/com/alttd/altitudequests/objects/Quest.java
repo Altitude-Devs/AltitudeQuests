@@ -2,6 +2,10 @@ package com.alttd.altitudequests.objects;
 
 import com.alttd.altitudequests.AQuest;
 import com.alttd.altitudequests.config.Config;
+import com.alttd.altitudequests.config.MessagesConfig;
+import com.alttd.altitudequests.objects.quests.BreedMobsQuest;
+import com.alttd.altitudequests.objects.quests.CollectDropsQuest;
+import com.alttd.altitudequests.objects.quests.KillMobsQuest;
 import com.alttd.altitudequests.objects.quests.MineQuest;
 import com.alttd.altitudequests.util.Logger;
 import com.alttd.altitudequests.util.Utilities;
@@ -25,10 +29,11 @@ public abstract class Quest {
     private static Quest weeklyQuest = null;
     private static final List<Class<? extends Quest>> possibleQuests = new ArrayList<>();
 
-    //TODO add all data every quest needs
-
     static {
         possibleQuests.add(MineQuest.class);
+        possibleQuests.add(KillMobsQuest.class);
+        possibleQuests.add(CollectDropsQuest.class);
+        possibleQuests.add(BreedMobsQuest.class);
     }
 
     private final UUID uuid;
@@ -74,7 +79,7 @@ public abstract class Quest {
     }
 
     private static HashSet<UUID> queriedUsers = new HashSet<>();
-    public static void tryLoadDailyQuest(UUID uuid) { //TODO set up a way to listen to the response and load stuff
+    public static void tryLoadDailyQuest(UUID uuid) {
         if (queriedUsers.contains(uuid) || dailyQuests.containsKey(uuid))
             return;
         queriedUsers.add(uuid);
@@ -108,16 +113,18 @@ public abstract class Quest {
     }
 
     public static boolean loadDailyQuest(String quest, String quest_variant, int step_1_progress, int step_2_progress, UUID uuid) {
-        Optional<Class<? extends Quest>> any = possibleQuests.stream().filter(q -> q.getSimpleName().equals(quest)).findAny();
+        Optional<Class<? extends Quest>> any = possibleQuests.stream()
+                .filter(q -> q.getSimpleName().equals(quest))
+                .findAny();
         if (any.isEmpty()) {
-            //TODO error
+            Logger.warning("Unable to find % quest giving up loading the quest for %", quest, uuid.toString());
             return false;
         }
         Class<? extends Quest> aClass = any.get();
         Constructor<? extends Quest> constructor;
         try {
-            constructor = aClass.getConstructor(String.class, int.class, int.class, UUID.class);
-            Quest quest1 = constructor.newInstance(quest_variant, step_1_progress, step_2_progress, uuid);
+            constructor = aClass.getConstructor(UUID.class, int.class, int.class, String.class);
+            Quest quest1 = constructor.newInstance(uuid, step_1_progress, step_2_progress, quest_variant);
             dailyQuests.put(uuid, quest1);
         } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
             e.printStackTrace();
@@ -134,7 +141,7 @@ public abstract class Quest {
         new BukkitRunnable() {
             @Override
             public void run() {
-                Bukkit.getServer().sendMessage(MiniMessage.miniMessage().deserialize(Config.RESETTING_QUESTS));
+                Bukkit.getServer().sendMessage(MiniMessage.miniMessage().deserialize(MessagesConfig.RESETTING_QUESTS));
                 dailyQuests.clear();
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     createDailyQuest(player);

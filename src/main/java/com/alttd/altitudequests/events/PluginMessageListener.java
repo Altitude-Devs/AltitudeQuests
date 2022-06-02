@@ -31,7 +31,7 @@ public class PluginMessageListener implements org.bukkit.plugin.messaging.Plugin
             case "try-lock-result" -> {
                 if (!in.readBoolean()) {
                     Logger.warning("Unable to lock row");
-                    return; //TODO handle
+                    return;
                 }
                 UUID uuid = UUID.fromString(in.readUTF());
                 if (Config.DEBUG)
@@ -49,7 +49,7 @@ public class PluginMessageListener implements org.bukkit.plugin.messaging.Plugin
             case "locked-queue-lock" -> {
                 if (!in.readBoolean()) {
                     Logger.warning("Got false back from locked queue lock");
-                    return; //TODO handle
+                    return;
                 }
                 UUID uuid = UUID.fromString(in.readUTF());
                 if (Config.DEBUG)

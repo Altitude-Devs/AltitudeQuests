@@ -2,7 +2,7 @@ package com.alttd.altitudequests.commands;
 
 import com.alttd.altitudequests.AQuest;
 import com.alttd.altitudequests.commands.subcommands.*;
-import com.alttd.altitudequests.config.Config;
+import com.alttd.altitudequests.config.MessagesConfig;
 import com.alttd.altitudequests.util.Logger;
 import org.bukkit.command.*;
 import org.jetbrains.annotations.NotNull;
@@ -46,7 +46,7 @@ public class CommandManager implements CommandExecutor, TabExecutor {
             subCommand = getSubCommand(args[0]);
 
         if (!commandSender.hasPermission(subCommand.getPermission())) {
-            commandSender.sendMiniMessage(Config.NO_PERMISSION, null);
+            commandSender.sendMiniMessage(MessagesConfig.NO_PERMISSION, null);
             return true;
         }
 

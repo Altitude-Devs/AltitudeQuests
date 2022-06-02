@@ -54,6 +54,11 @@ public final class AQuest extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new MineBlocks(), this);
         getServer().getPluginManager().registerEvents(new LoginEvent(), this);
         getServer().getPluginManager().registerEvents(new LogoutEvent(), this);
+        getServer().getPluginManager().registerEvents(new EntityDeath(), this);
+        getServer().getPluginManager().registerEvents(new EntitySheared(), this);
+        getServer().getPluginManager().registerEvents(new EntityBucketed(), this);
+        getServer().getPluginManager().registerEvents(new EntityBreed(), this);
+        getServer().getPluginManager().registerEvents(new DonNotMessWithNPC(), this);
         getServer().getPluginManager().registerEvents(new QuestComplete(), this);
         getServer().getMessenger().registerOutgoingPluginChannel(this, "aquest:player-data");
         getServer().getMessenger().registerIncomingPluginChannel(this, "aquest:player-data", new PluginMessageListener());
