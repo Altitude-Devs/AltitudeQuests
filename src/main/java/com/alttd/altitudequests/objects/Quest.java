@@ -7,6 +7,8 @@ import com.alttd.altitudequests.util.Logger;
 import com.alttd.altitudequests.util.Utilities;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -15,6 +17,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public abstract class Quest {
 
@@ -26,6 +29,20 @@ public abstract class Quest {
 
     static {
         possibleQuests.add(MineQuest.class);
+    }
+
+    private final UUID uuid;
+    private int step1;
+    private int step2;
+    private final Variant variant;
+    private boolean isDone;
+
+    public Quest(UUID uuid, int step1, int step2, Variant variant) {
+        this.uuid = uuid;
+        this.step1 = step1;
+        this.step2 = step2;
+        this.variant = variant;
+        this.isDone = false;
     }
 
     public static void createDailyQuest(Player player) {
@@ -76,17 +93,12 @@ public abstract class Quest {
         }.runTaskAsynchronously(AQuest.getInstance());
     }
 
-    public static void unloadUser(UUID uuid) {
+    public static void unloadUser(UUID uuid) { //Pls only run async
         queriedUsers.remove(uuid);
         Quest quest = dailyQuests.remove(uuid);
         if (quest == null)
             return;
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                quest.save();
-            }
-        }.runTaskAsynchronously(AQuest.getInstance());
+        quest.save();
     }
 
     public static void saveAll() {
@@ -95,11 +107,11 @@ public abstract class Quest {
         }
     }
 
-    public static void loadDailyQuest(String quest, String quest_variant, int step_1_progress, int step_2_progress, UUID uuid) {
+    public static boolean loadDailyQuest(String quest, String quest_variant, int step_1_progress, int step_2_progress, UUID uuid) {
         Optional<Class<? extends Quest>> any = possibleQuests.stream().filter(q -> q.getSimpleName().equals(quest)).findAny();
         if (any.isEmpty()) {
             //TODO error
-            return;
+            return false;
         }
         Class<? extends Quest> aClass = any.get();
         Constructor<? extends Quest> constructor;
@@ -109,16 +121,93 @@ public abstract class Quest {
             dailyQuests.put(uuid, quest1);
         } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
             e.printStackTrace();
+            return false;
         }
+        return true;
+    }
+
+    public static Collection<String> getTypes() {
+        return possibleQuests.stream().map(Class::getSimpleName).collect(Collectors.toList());
+    }
+
+    public static void resetQuests() {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                Bukkit.getServer().sendMessage(MiniMessage.miniMessage().deserialize(Config.RESETTING_QUESTS));
+                dailyQuests.clear();
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    createDailyQuest(player);
+                }
+            }
+        }.runTaskAsynchronously(AQuest.getInstance());
     }
 
     public abstract void save();
 
-    public abstract boolean isDone();
-
-    public abstract List<String> getPages();
-
     public abstract TagResolver getTagResolvers();
 
     public abstract int turnIn(Player player);
+
+    public abstract Component getDisplayName();
+
+    public List<String> getQuestPages() {
+        return variant.getQuestPages();
+    }
+
+    public List<String> getDonePages() {
+        return variant.getDonePages();
+    }
+
+    protected void checkDone() {
+        if (isDone())
+            return;
+        if (getStep1() == variant.getAmount() && getStep2() == variant.getAmount()) {
+            setDone(true);
+        }
+    }
+
+    public void checkDone(Player player) {
+        checkDone();
+        if (!isDone)
+            return;
+        QuestCompleteEvent event = new QuestCompleteEvent(player, this, true);
+        event.callEvent();
+    }
+
+    public Variant getVariant() {
+        return variant;
+    }
+
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    public int getStep1() {
+        return step1;
+    }
+
+    public void addStep1(int step1) {
+        this.step1 += step1;
+    }
+
+    public int getStep2() {
+        return step2;
+    }
+
+    public void addStep2(int step2) {
+        this.step2 += step2;
+    }
+
+    public void setDone(boolean done) {
+        isDone = done;
+    }
+
+    public boolean isDone() {
+        return isDone;
+    }
+
+    public int getMaxToTurnIn() {
+        return Math.min(variant.getAmount() - getStep2(), getStep1() - getStep2());
+    }
 }

@@ -1,12 +1,14 @@
 package com.alttd.altitudequests.objects.quests;
 
+import com.alttd.altitudequests.config.Config;
 import com.alttd.altitudequests.config.QuestsConfig;
 import com.alttd.altitudequests.database.Database;
-import com.alttd.altitudequests.objects.MineQuestObject;
+import com.alttd.altitudequests.objects.variants.MineQuestObject;
 import com.alttd.altitudequests.objects.Quest;
-import com.alttd.altitudequests.objects.QuestCompleteEvent;
 import com.alttd.altitudequests.util.Logger;
 import com.alttd.altitudequests.util.Utilities;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.block.Block;
@@ -19,50 +21,59 @@ import java.util.*;
 
 public class MineQuest extends Quest {
 
-    private final UUID uuid;
-    private int mined;
-    private int turnedIn;
     private final MineQuestObject mineQuestObject;
-    private boolean isDone = false;
 
     public MineQuest(UUID uuid) {
-        this.uuid = uuid;
-        mined = 0;
-        turnedIn = 0;
-        this.mineQuestObject = QuestsConfig.MINE_QUESTS.get(Utilities.randomOr0(QuestsConfig.MINE_QUESTS.size() - 1));
+        super(uuid, 0, 0,
+            QuestsConfig.MINE_QUESTS.get(Utilities.randomOr0(QuestsConfig.MINE_QUESTS.size() - 1)));
+        if (getVariant() instanceof MineQuestObject mineQuestObject)
+            this.mineQuestObject = mineQuestObject;
+        else
+            this.mineQuestObject = null;
+        if (mineQuestObject == null) {
+            Logger.warning("Tried to create MineQuest but unable to find variant: %.", "unknown");
+            return; //TODO error
+        }
     }
 
-    public MineQuest(String variantInternalName, int mined, int turnedIn,  UUID uuid) {
-        this.mined = mined;
-        this.turnedIn = turnedIn;
-        this.uuid = uuid;
-        Optional<MineQuestObject> any = QuestsConfig.MINE_QUESTS.stream().filter(object -> variantInternalName.equals(object.getInternalName())).findAny();
-        if (any.isEmpty()) {
+    public MineQuest(String variantInternalName, int mined, int turnedIn, UUID uuid) {
+        super(uuid, mined, turnedIn, QuestsConfig.MINE_QUESTS.stream()
+                .filter(object -> variantInternalName.equals(object.getInternalName()))
+                .findAny().orElse(null));
+        if (getVariant() instanceof MineQuestObject mineQuestObject)
+            this.mineQuestObject = mineQuestObject;
+        else
             this.mineQuestObject = null;
+        if (mineQuestObject == null) {
             Logger.warning("Tried to create MineQuest but unable to find variant: %.", variantInternalName);
             return; //TODO error
         }
-        this.mineQuestObject = any.get();
+        checkDone();
     }
 
     @Override
     public void save() {
         String sql = "INSERT INTO generic_quest_progress " +
-                "(uuid, quest, quest_variant, step_1_progress, step_2_progress) " +
-                "VALUES (?, ?, ?, ?, ?) " +
+                "(year_day, uuid, quest, quest_variant, step_1_progress, step_2_progress) " +
+                "VALUES (?, ?, ?, ?, ?, ?) " +
                 "ON DUPLICATE KEY UPDATE " +
-                    "quest = ?, quest_variant = ?, step_1_progress = ?, step_2_progress = ?";
+                    "quest = ?, quest_variant = ?, step_1_progress = ?, step_2_progress = ?, year_day = ?";
         try {
             PreparedStatement statement = Database.getDatabase().getConnection().prepareStatement(sql);
-            statement.setString(1, uuid.toString());
-            statement.setString(2, MineQuest.class.getSimpleName());
-            statement.setString(3, mineQuestObject.getInternalName());
-            statement.setInt(4, mined);
-            statement.setInt(5, turnedIn);
-            statement.setString(6, MineQuest.class.getSimpleName());
-            statement.setString(7, mineQuestObject.getInternalName());
-            statement.setInt(8, mined);
-            statement.setInt(9, turnedIn);
+            int yearDay = Utilities.getYearDay();
+            if (Config.DEBUG)
+                Logger.info("Saving user for year day %.", String.valueOf(yearDay));
+            statement.setInt(1, yearDay);
+            statement.setString(2, getUuid().toString());
+            statement.setString(3, MineQuest.class.getSimpleName());
+            statement.setString(4, mineQuestObject.getInternalName());
+            statement.setInt(5, getStep1());
+            statement.setInt(6, getStep2());
+            statement.setString(7, MineQuest.class.getSimpleName());
+            statement.setString(8, mineQuestObject.getInternalName());
+            statement.setInt(9, getStep1());
+            statement.setInt(10, getStep2());
+            statement.setInt(11, yearDay);
             statement.execute();
         } catch (SQLException exception) {
             exception.printStackTrace();
@@ -70,32 +81,22 @@ public class MineQuest extends Quest {
     }
 
     @Override
-    public boolean isDone() {
-        return isDone;
-    }
-
-    @Override
-    public List<String> getPages() {
-        return mineQuestObject.getPages();
-    }
-
-    @Override
     public TagResolver getTagResolvers() {
         return TagResolver.resolver(
                 Placeholder.unparsed("block", mineQuestObject.getMaterial().name()),
-                Placeholder.parsed("mined", mined == mineQuestObject.getAmount() ?
-                        "<green>" + mined + "</green>" : "<red>" + mined + "</red>"),
-                Placeholder.parsed("total_to_mine", String.valueOf(mineQuestObject.getAmount())),
-                Placeholder.parsed("turned_in", turnedIn == mineQuestObject.getAmount() ?
-                        "<green>" + turnedIn + "</green>" : "<red>" + turnedIn + "</red>"),
-                Placeholder.parsed("total_to_turn_in", String.valueOf(mineQuestObject.getAmount()))
+                Placeholder.parsed("step_1_progress", getStep1() == mineQuestObject.getAmount() ?
+                        "<green>" + getStep1() + "</green>" : "<red>" + getStep1() + "</red>"),
+                Placeholder.parsed("step_1_total", String.valueOf(mineQuestObject.getAmount())),
+                Placeholder.parsed("step_2_progress", getStep2() == mineQuestObject.getAmount() ?
+                        "<green>" + getStep2() + "</green>" : "<red>" + getStep2() + "</red>"),
+                Placeholder.parsed("step_2_total", String.valueOf(mineQuestObject.getAmount()))
                 );
     }
 
     @Override
     public int turnIn(Player player) {
         PlayerInventory inventory = player.getInventory();
-        int maxToTurnIn = Math.min(mineQuestObject.getAmount() - turnedIn, mined);
+        int maxToTurnIn = getMaxToTurnIn();
 
         if (maxToTurnIn == 0)
             return 0;
@@ -118,22 +119,20 @@ public class MineQuest extends Quest {
                     }
                 });
         int totalTurnedIn = maxToTurnIn - ref.tmpAmount;
-        turnedIn += totalTurnedIn;
+        addStep2(totalTurnedIn);
         checkDone(player);
         return totalTurnedIn;
     }
 
-    public void mine(Block block) {
-        if (isDone || mined == mineQuestObject.getAmount() || !block.getType().equals(mineQuestObject.getMaterial()))
-            return;
-        mined += 1;
+    @Override
+    public Component getDisplayName() {
+        return MiniMessage.miniMessage().deserialize(QuestsConfig.MINE_QUEST_NAME);
     }
 
-    public void checkDone(Player player) {
-        if (turnedIn == mineQuestObject.getAmount() && mined == mineQuestObject.getAmount()) {
-            isDone = true;
-            QuestCompleteEvent event = new QuestCompleteEvent(player, this, true);
-            event.callEvent();
-        }
+    public void mine(Block block) {
+        if (isDone() || !block.getType().equals(mineQuestObject.getMaterial()))
+            return;
+        addStep1(1);
+        checkDone();
     }
 }

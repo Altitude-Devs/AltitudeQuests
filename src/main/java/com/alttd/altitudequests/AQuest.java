@@ -5,6 +5,7 @@ import com.alttd.altitudequests.config.*;
 import com.alttd.altitudequests.events.*;
 import com.alttd.altitudequests.objects.Quest;
 import com.alttd.altitudequests.util.Logger;
+import com.alttd.altitudequests.util.Utilities;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -35,7 +36,9 @@ public final class AQuest extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
+        if (Config.DEBUG)
+            Logger.info("Syncing users.");
+        Quest.saveAll();
     }
 
     public void reloadConfigs() {
@@ -56,6 +59,7 @@ public final class AQuest extends JavaPlugin {
         getServer().getMessenger().registerIncomingPluginChannel(this, "aquest:player-data", new PluginMessageListener());
     }
 
+    private static int yearDay = Utilities.getYearDay();
     private void scheduleTasks() {
         new BukkitRunnable() {
             @Override
@@ -64,6 +68,17 @@ public final class AQuest extends JavaPlugin {
                     Logger.info("Syncing users.");
                 Quest.saveAll();
             }
-        }.runTaskTimerAsynchronously(getInstance(), 10 * 60 * 20L, 10 * 60 * 20L);
+        }.runTaskTimerAsynchronously(getInstance(), 10 * 60 * 20L, 10 * 60 * 20L); //every 10 minutes
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                int tmp = Utilities.getYearDay();
+                if (tmp == yearDay)
+                    return;
+                yearDay = tmp;
+                Quest.resetQuests();
+            }
+        }.runTaskTimerAsynchronously(getInstance(), 100, 100); //every 5 seconds
     }
 }

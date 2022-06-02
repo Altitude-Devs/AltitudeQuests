@@ -24,9 +24,6 @@ public class LogoutEvent implements Listener {
             public void run() {
                 if (Config.DEBUG)
                     Logger.info("Syncing %", event.getPlayer().getName());
-                Quest dailyQuest = Quest.getDailyQuest(uuid);
-                if (dailyQuest != null)
-                    dailyQuest.save();
                 Quest.unloadUser(uuid);
                 ByteArrayDataOutput out = ByteStreams.newDataOutput();
                 out.writeUTF("try-unlock");

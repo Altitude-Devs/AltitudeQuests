@@ -91,6 +91,7 @@ public class Database {
     private static void createUserPointsTable() {
         try {
             String sql = "CREATE TABLE IF NOT EXISTS generic_quest_progress(" +
+                    "year_day INT NOT NULL, " +
                     "uuid VARCHAR(36) NOT NULL, " +
                     "quest VARCHAR(36) NOT NULL, " +
                     "quest_variant VARCHAR(36) NOT NULL, " +

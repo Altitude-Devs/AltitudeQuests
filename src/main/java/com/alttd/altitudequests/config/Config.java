@@ -28,7 +28,17 @@ public final class Config extends AbstractConfig {
 
     public static String QUEST_BOOK_AUTHOR = "<magenta>Scruff</magenta>";
     public static String QUEST_BOOK_TITLE = "<green>Quest Title</green>";
-    public static List<String> QUEST_PAGES = List.of("Example");
+    public static List<String> QUEST_PAGES = List.of("""
+            <bold><gold>Hey <player></gold></bold>
+    
+            Here is a quick summary of your quest progress so far!
+            * Quest: <quest>
+            * Variant: <variant>
+            * Items obtained: <step_1_progress>/<step_1_total>
+            * Items turned in: <step_2_progress>/<step_2_total>
+            
+            <click:run_command:/aquest turnin><gold>Click here to turn in more items</gold></click>
+            """);
     private static void loadBook() {
         QUEST_BOOK_AUTHOR = config.getString("book.author", QUEST_BOOK_AUTHOR);
         QUEST_BOOK_TITLE = config.getString("book.title", QUEST_BOOK_TITLE);
@@ -37,9 +47,11 @@ public final class Config extends AbstractConfig {
 
     public static String TOO_FAR_FROM_NPC = "<red>You are too far from Scruff";//TODO replace scruff with <npc>?
     public static String DAILY_ALREADY_DONE = "<red>You already completed your daily quest";
+    public static String RESETTING_QUESTS = "<white>[<gold>Mascot</gold>] <light_purple>Scruff</light_purple><gray>:</gray> <green>Thank you everyone that completed their daily quest! I will be handing out new ones now so come visit me at <gold>/spawn</gold>!</green></white>";
     private static void loadMessages() {
         TOO_FAR_FROM_NPC = config.getString("messages.too-far-from-npc", TOO_FAR_FROM_NPC);
         DAILY_ALREADY_DONE = config.getString("messages.daily-already-done", DAILY_ALREADY_DONE);
+        RESETTING_QUESTS = config.getString("messages.resetting-quests", RESETTING_QUESTS);
     }
 
     private static void loadGUIText() {

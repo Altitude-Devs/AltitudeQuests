@@ -1,6 +1,6 @@
 package com.alttd.altitudequests.config;;
 
-import com.alttd.altitudequests.objects.MineQuestObject;
+import com.alttd.altitudequests.objects.variants.MineQuestObject;
 import com.alttd.altitudequests.util.Logger;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -24,6 +24,7 @@ public class QuestsConfig extends AbstractConfig {
     }
 
     public static List<MineQuestObject> MINE_QUESTS = new ArrayList<>();
+    public static String MINE_QUEST_NAME = "<green>Mine quest</green>";
 
     private static void loadMineQuests() {
         MINE_QUESTS.clear();
@@ -35,13 +36,13 @@ public class QuestsConfig extends AbstractConfig {
         Set<String> keys = configurationSection.getKeys(false);
         for (String key : keys) {
             Material material = Material.valueOf(configurationSection.getString(key + ".material"));
-//TODO maybe have pages for in progress and pages for done???
-            List<String> collect = configurationSection.getStringList(key + ".pages");
             MINE_QUESTS.add(new MineQuestObject(key,
                     configurationSection.getString(key + ".name"),
                     material,
                     configurationSection.getInt(key + ".amount"),
-                    collect));
+                    configurationSection.getStringList(key + ".quest-pages"),
+                    configurationSection.getStringList(key + ".done-pages")));
         }
+        MINE_QUEST_NAME = config.getString("mining.name", MINE_QUEST_NAME);
     }
 }

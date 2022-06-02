@@ -33,7 +33,8 @@ public class CommandManager implements CommandExecutor, TabExecutor {
                 new CommandReload(AQuest.getInstance()),
                 new CommandCreateScruff(),
                 new CommandChangeQuest(),
-                new CommandTurnIn());
+                new CommandTurnIn(),
+                new CommandSetQuest());
     }
 
     @Override
@@ -58,6 +59,7 @@ public class CommandManager implements CommandExecutor, TabExecutor {
 
         if (args.length <= 1) {
             res.addAll(subCommands.stream()
+                    .filter(SubCommand::shouldTabComplete)
                     .filter(subCommand -> commandSender.hasPermission(subCommand.getPermission()))
                     .map(SubCommand::getName)
                     .filter(name -> args.length == 0 || name.startsWith(args[0]))

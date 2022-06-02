@@ -4,6 +4,7 @@ import com.alttd.altitudequests.commands.SubCommand;
 import com.alttd.altitudequests.config.Config;
 import com.alttd.altitudequests.config.LocalConfig;
 import com.alttd.altitudequests.objects.Quest;
+import com.alttd.altitudequests.util.BookOpener;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -30,6 +31,7 @@ public class CommandTurnIn extends SubCommand {
             return true;
         }
         dailyQuest.turnIn(player);
+        BookOpener.openBook(player);
         return true;
     }
 

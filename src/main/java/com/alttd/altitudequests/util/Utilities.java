@@ -1,5 +1,7 @@
 package com.alttd.altitudequests.util;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Random;
 
 public class Utilities {
@@ -12,5 +14,11 @@ public class Utilities {
         if (max <= 1)
             return 0;
         return new Random().nextInt(0, max - 1);
+    }
+
+    public static int getYearDay() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        return (calendar.get(Calendar.YEAR) * 1000) + calendar.get(Calendar.DAY_OF_YEAR);
     }
 }

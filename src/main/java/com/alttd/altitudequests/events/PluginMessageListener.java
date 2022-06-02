@@ -5,6 +5,7 @@ import com.alttd.altitudequests.config.Config;
 import com.alttd.altitudequests.database.Database;
 import com.alttd.altitudequests.objects.Quest;
 import com.alttd.altitudequests.util.Logger;
+import com.alttd.altitudequests.util.Utilities;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
 import org.bukkit.Bukkit;
@@ -70,7 +71,7 @@ public class PluginMessageListener implements org.bukkit.plugin.messaging.Plugin
                     PreparedStatement statement = Database.getDatabase().getConnection().prepareStatement(sql);
                     statement.setString(1, uuid.toString());
                     ResultSet resultSet = statement.executeQuery();
-                    if (resultSet.next()) {
+                    if (resultSet.next() && resultSet.getInt("year_day") < Utilities.getYearDay()) {
                         Quest.loadDailyQuest(
                                 resultSet.getString("quest"),
                                 resultSet.getString("quest_variant"),
