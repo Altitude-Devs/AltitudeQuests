@@ -97,7 +97,7 @@ public class Database {
                     "quest_variant VARCHAR(36) NOT NULL, " +
                     "step_1_progress INT NOT NULL, " +
                     "step_2_progress INT NOT NULL, " +
-                    "PRIMARY KEY (UUID, quest)" +
+                    "PRIMARY KEY (UUID)" +
                     ")";
             getDatabase().getConnection().prepareStatement(sql).executeUpdate();
         } catch (SQLException e) {

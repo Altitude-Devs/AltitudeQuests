@@ -85,14 +85,22 @@ public class CollectDropsQuest extends Quest {
 
     @Override
     public TagResolver getTagResolvers() {
-        return TagResolver.resolver(
+        TagResolver resolver = TagResolver.resolver(
                 Placeholder.unparsed("item", collectDropsQuestObject.getMaterial().name()),
                 Placeholder.parsed("step_1_progress", getStep1() == collectDropsQuestObject.getAmount() ?
                         "<green>" + getStep1() + "</green>" : "<red>" + getStep1() + "</red>"),
                 Placeholder.parsed("step_1_total", String.valueOf(collectDropsQuestObject.getAmount())),
                 Placeholder.parsed("step_2_progress", getStep2() == collectDropsQuestObject.getAmount() ?
                         "<green>" + getStep2() + "</green>" : "<red>" + getStep2() + "</red>"),
-                Placeholder.parsed("step_2_total", String.valueOf(collectDropsQuestObject.getAmount()))
+                Placeholder.parsed("step_2_total", String.valueOf(collectDropsQuestObject.getAmount())),
+                Placeholder.unparsed("step_1", QuestsConfig.COLLECT_DROPS_STEP_1),
+                Placeholder.unparsed("step_2", QuestsConfig.COLLECT_DROPS_STEP_2),
+                Placeholder.unparsed("turn_in_text", QuestsConfig.COLLECT_DROPS_TURN_IN)
+        );
+        Component turnInText = MiniMessage.miniMessage().deserialize(QuestsConfig.COLLECT_DROPS_TURN_IN, resolver);
+        return TagResolver.resolver(
+                resolver,
+                Placeholder.component("turn_in_text", turnInText)
         );
     }
 

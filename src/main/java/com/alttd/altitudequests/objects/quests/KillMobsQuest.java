@@ -81,14 +81,21 @@ public class KillMobsQuest extends Quest {
 
     @Override
     public TagResolver getTagResolvers() {
-        return TagResolver.resolver(
+        TagResolver resolver = TagResolver.resolver(
                 Placeholder.unparsed("mob", killMobsQuestObject.getEntityType().name()),
                 Placeholder.parsed("step_1_progress", getStep1() == killMobsQuestObject.getAmount() ?
                         "<green>" + getStep1() + "</green>" : "<red>" + getStep1() + "</red>"),
                 Placeholder.parsed("step_1_total", String.valueOf(killMobsQuestObject.getAmount())),
                 Placeholder.parsed("step_2_progress", getStep2() == killMobsQuestObject.getAmount() ?
                         "<green>" + getStep2() + "</green>" : "<red>" + getStep2() + "</red>"),
-                Placeholder.parsed("step_2_total", String.valueOf(killMobsQuestObject.getAmount()))
+                Placeholder.parsed("step_2_total", String.valueOf(killMobsQuestObject.getAmount())),
+                Placeholder.unparsed("step_1", QuestsConfig.KILL_MOB_STEP_1),
+                Placeholder.unparsed("step_2", QuestsConfig.KILL_MOB_STEP_2)
+        );
+        Component turnInText = MiniMessage.miniMessage().deserialize(QuestsConfig.KILL_MOB_TURN_IN, resolver);
+        return TagResolver.resolver(
+                resolver,
+                Placeholder.component("turn_in_text", turnInText)
         );
     }
 

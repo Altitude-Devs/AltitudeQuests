@@ -82,15 +82,22 @@ public class MineQuest extends Quest {
 
     @Override
     public TagResolver getTagResolvers() {
-        return TagResolver.resolver(
+        TagResolver resolver = TagResolver.resolver(
                 Placeholder.unparsed("block", mineQuestObject.getMaterial().name()),
                 Placeholder.parsed("step_1_progress", getStep1() == mineQuestObject.getAmount() ?
                         "<green>" + getStep1() + "</green>" : "<red>" + getStep1() + "</red>"),
                 Placeholder.parsed("step_1_total", String.valueOf(mineQuestObject.getAmount())),
                 Placeholder.parsed("step_2_progress", getStep2() == mineQuestObject.getAmount() ?
                         "<green>" + getStep2() + "</green>" : "<red>" + getStep2() + "</red>"),
-                Placeholder.parsed("step_2_total", String.valueOf(mineQuestObject.getAmount()))
-                );
+                Placeholder.parsed("step_2_total", String.valueOf(mineQuestObject.getAmount())),
+                Placeholder.unparsed("step_1", QuestsConfig.MINE_STEP_1),
+                Placeholder.unparsed("step_2", QuestsConfig.MINE_STEP_2)
+        );
+        Component turnInText = MiniMessage.miniMessage().deserialize(QuestsConfig.MINE_TURN_IN, resolver);
+        return TagResolver.resolver(
+                resolver,
+                Placeholder.component("turn_in_text", turnInText)
+        );
     }
 
     @Override

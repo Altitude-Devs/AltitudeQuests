@@ -24,13 +24,13 @@ public final class Config extends AbstractConfig {
     public static List<String> QUEST_PAGES = List.of("""
             <bold><gold>Hey <player></gold></bold>
     
-            Here is a quick summary of your quest progress so far!
+            Active quest summary:
             * Quest: <quest>
-            * Variant: <variant>
-            * Items obtained: <step_1_progress>/<step_1_total>
-            * Items turned in: <step_2_progress>/<step_2_total>
+            * Type: <variant>
+            * <step_1>: <step_1_progress>/<step_1_total>
+            * <step_2>: <step_2_progress>/<step_2_total>
             
-            <click:run_command:/aquest turnin><gold>Click here to turn in more items</gold></click>
+            <click:run_command:/aquest turnin><turn_in_text></click>
             """);
     private static void loadBook() {
         QUEST_BOOK_AUTHOR = config.getString("book.author", QUEST_BOOK_AUTHOR);
