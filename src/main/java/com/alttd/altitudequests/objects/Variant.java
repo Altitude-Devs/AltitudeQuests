@@ -3,8 +3,7 @@ package com.alttd.altitudequests.objects;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public abstract class Variant {
 
@@ -41,7 +40,16 @@ public abstract class Variant {
     }
 
     public int calculateAmount(int questsCompleted) {
-        int difficultyOffset = ((rangeMax - rangeMin) / 40) * questsCompleted;
-        return new Random().nextInt(Integer.min(rangeMax - 1, rangeMin + difficultyOffset), rangeMax);
+        double difficultyOffset = ((rangeMax - rangeMin) / (double) getDaysInMonth());
+        int min = Math.max(rangeMin, rangeMin + (int) (difficultyOffset * (questsCompleted - 5)));
+        int max = Math.min(rangeMax, rangeMin + (int) (difficultyOffset * (questsCompleted + 5)));
+        return new Random().nextInt(min, max);
+    }
+
+    private int getDaysInMonth() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+
+        return calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
     }
 }
