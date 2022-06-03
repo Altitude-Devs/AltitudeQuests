@@ -25,7 +25,7 @@ public class MineQuest extends Quest {
 
     public MineQuest(UUID uuid) {
         super(uuid, 0, 0,
-            QuestsConfig.MINE_QUESTS.get(Utilities.randomOr0(QuestsConfig.MINE_QUESTS.size() - 1)));
+            QuestsConfig.MINE_QUESTS.get(Utilities.randomOr0(QuestsConfig.MINE_QUESTS.size() - 1)), false);
         if (getVariant() instanceof MineQuestObject mineQuestObject)
             this.mineQuestObject = mineQuestObject;
         else
@@ -36,10 +36,11 @@ public class MineQuest extends Quest {
         }
     }
 
-    public MineQuest(UUID uuid, int mined, int turnedIn, String variant) {
+    public MineQuest(UUID uuid, int mined, int turnedIn, String variant, boolean rewardReceived) {
         super(uuid, mined, turnedIn, QuestsConfig.MINE_QUESTS.stream()
                 .filter(object -> variant.equals(object.getInternalName()))
-                .findAny().orElse(null));
+                .findAny().orElse(null),
+                rewardReceived);
         if (getVariant() instanceof MineQuestObject mineQuestObject)
             this.mineQuestObject = mineQuestObject;
         else
@@ -54,10 +55,10 @@ public class MineQuest extends Quest {
     @Override
     public void save() {
         String sql = "INSERT INTO generic_quest_progress " +
-                "(year_day, uuid, quest, quest_variant, step_1_progress, step_2_progress) " +
-                "VALUES (?, ?, ?, ?, ?, ?) " +
+                "(year_day, uuid, quest, quest_variant, step_1_progress, step_2_progress, reward_received) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?) " +
                 "ON DUPLICATE KEY UPDATE " +
-                    "quest = ?, quest_variant = ?, step_1_progress = ?, step_2_progress = ?, year_day = ?";
+                "quest = ?, quest_variant = ?, step_1_progress = ?, step_2_progress = ?, year_day = ?, reward_received = ?";
         try {
             PreparedStatement statement = Database.getDatabase().getConnection().prepareStatement(sql);
             int yearDay = Utilities.getYearDay();
@@ -69,11 +70,13 @@ public class MineQuest extends Quest {
             statement.setString(4, mineQuestObject.getInternalName());
             statement.setInt(5, getStep1());
             statement.setInt(6, getStep2());
-            statement.setString(7, this.getClass().getSimpleName());
-            statement.setString(8, mineQuestObject.getInternalName());
-            statement.setInt(9, getStep1());
-            statement.setInt(10, getStep2());
-            statement.setInt(11, yearDay);
+            statement.setInt(7, isRewardReceived() ? 1 : 0);
+            statement.setString(8, this.getClass().getSimpleName());
+            statement.setString(9, mineQuestObject.getInternalName());
+            statement.setInt(10, getStep1());
+            statement.setInt(11, getStep2());
+            statement.setInt(12, yearDay);
+            statement.setInt(13, isRewardReceived() ? 1 : 0);
             statement.execute();
         } catch (SQLException exception) {
             exception.printStackTrace();
@@ -83,7 +86,7 @@ public class MineQuest extends Quest {
     @Override
     public TagResolver getTagResolvers() {
         TagResolver resolver = TagResolver.resolver(
-                Placeholder.unparsed("block", mineQuestObject.getMaterial().name()),
+                Placeholder.unparsed("block", Utilities.formatName(mineQuestObject.getMaterial().name())),
                 Placeholder.parsed("step_1_progress", getStep1() == mineQuestObject.getAmount() ?
                         "<green>" + getStep1() + "</green>" : "<red>" + getStep1() + "</red>"),
                 Placeholder.parsed("step_1_total", String.valueOf(mineQuestObject.getAmount())),
@@ -134,6 +137,11 @@ public class MineQuest extends Quest {
     @Override
     public Component getDisplayName() {
         return MiniMessage.miniMessage().deserialize(QuestsConfig.MINE_QUEST_NAME);
+    }
+
+    @Override
+    public List<String> getRewardCommand() {
+        return QuestsConfig.MINE_COMMANDS;
     }
 
     public void mine(Block block) {

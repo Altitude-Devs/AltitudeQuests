@@ -32,6 +32,7 @@ public class QuestsConfig extends AbstractConfig {
     public static String MINE_STEP_1 = "Mined";
     public static String MINE_STEP_2 = "Turned in";
     public static String MINE_TURN_IN = "<gold>Click here to turn in your <block></gold>";
+    public static List<String> MINE_COMMANDS = List.of("broadcast <player> Finished their daily quest!");
 
     private static void loadMineQuests() {
         MINE_QUESTS.clear();
@@ -59,6 +60,7 @@ public class QuestsConfig extends AbstractConfig {
         MINE_STEP_1 = config.getString("mining.step-1", MINE_STEP_1);
         MINE_STEP_2 = config.getString("mining.step-2", MINE_STEP_2);
         MINE_TURN_IN = config.getString("mining.turn-in", MINE_TURN_IN);
+        MINE_COMMANDS = config.getStringList("mining.commands", MINE_COMMANDS);
     }
 
     public static List<KillMobsQuestObject> KILL_MOB_QUEST = new ArrayList<>();
@@ -66,6 +68,8 @@ public class QuestsConfig extends AbstractConfig {
     public static String KILL_MOB_STEP_1 = "Killed";
     public static String KILL_MOB_STEP_2 = "Confirmed";
     public static String KILL_MOB_TURN_IN = "<gold>Click here to confirm the killed <mob>s</gold>";
+    public static List<String> KILL_MOB_COMMANDS = List.of("broadcast <player> Finished their daily quest!");
+
     private static void loadKillMobQuests() {
         KILL_MOB_QUEST.clear();
         ConfigurationSection configurationSection = config.getConfigurationSection("kill_mobs.possible_tasks");
@@ -92,6 +96,7 @@ public class QuestsConfig extends AbstractConfig {
         KILL_MOB_STEP_1 = config.getString("kill_mobs.step-1", KILL_MOB_STEP_1);
         KILL_MOB_STEP_2 = config.getString("kill_mobs.step-2", KILL_MOB_STEP_2);
         KILL_MOB_TURN_IN = config.getString("kill_mobs.turn-in", KILL_MOB_TURN_IN);
+        KILL_MOB_COMMANDS = config.getStringList("kill_mobs.commands", KILL_MOB_COMMANDS);
     }
 
     public static List<CollectDropsQuestObject> COLLECT_DROPS_QUEST = new ArrayList<>();
@@ -99,6 +104,8 @@ public class QuestsConfig extends AbstractConfig {
     public static String COLLECT_DROPS_STEP_1 = "Obtained";
     public static String COLLECT_DROPS_STEP_2 = "Turned in";
     public static String COLLECT_DROPS_TURN_IN = "<gold>Click here to turn in your <item></gold>";
+    public static List<String> COLLECT_DROPS_COMMANDS = List.of("broadcast <player> Finished their daily quest!");
+
     private static void loadCollectQuests() {
         COLLECT_DROPS_QUEST.clear();
         ConfigurationSection configurationSection = config.getConfigurationSection("collect_drops.possible_tasks");
@@ -125,6 +132,7 @@ public class QuestsConfig extends AbstractConfig {
         COLLECT_DROPS_STEP_1 = config.getString("collect_drops.step-1", COLLECT_DROPS_STEP_1);
         COLLECT_DROPS_STEP_2 = config.getString("collect_drops.step-2", COLLECT_DROPS_STEP_2);
         COLLECT_DROPS_TURN_IN = config.getString("collect_drops.turn-in", COLLECT_DROPS_TURN_IN);
+        COLLECT_DROPS_COMMANDS = config.getStringList("collect_drops.commands", COLLECT_DROPS_COMMANDS);
     }
 
     public static List<BreedMobsQuestObject> BREED_MOB_QUEST = new ArrayList<>();
@@ -132,6 +140,8 @@ public class QuestsConfig extends AbstractConfig {
     public static String BREED_STEP_1 = "Bred";
     public static String BREED_STEP_2 = "Confirmed";
     public static String BREED_TURN_IN = "<gold>Click here to confirm the baby <mob>s</gold>";
+    public static List<String> BREED_MOB_COMMANDS = List.of("broadcast <player> Finished their daily quest!");
+
     private static void loadBreedMobQuests() {
         BREED_MOB_QUEST.clear();
         ConfigurationSection configurationSection = config.getConfigurationSection("breed_mobs.possible_tasks");
@@ -158,5 +168,6 @@ public class QuestsConfig extends AbstractConfig {
         BREED_STEP_1 = config.getString("breed_mobs.step-1", BREED_STEP_1);
         BREED_STEP_2 = config.getString("breed_mobs.step-2", BREED_STEP_2);
         BREED_TURN_IN = config.getString("breed_mobs.turn-in", BREED_TURN_IN);
+        BREED_MOB_COMMANDS = config.getStringList("breed_mobs.commands", BREED_MOB_COMMANDS);
     }
 }

@@ -16,6 +16,7 @@ import org.bukkit.entity.Player;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.UUID;
 
 public class BreedMobsQuest extends Quest {
@@ -24,7 +25,7 @@ public class BreedMobsQuest extends Quest {
 
     public BreedMobsQuest(UUID uuid) {
         super(uuid, 0, 0,
-                QuestsConfig.BREED_MOB_QUEST.get(Utilities.randomOr0(QuestsConfig.BREED_MOB_QUEST.size() - 1)));
+                QuestsConfig.BREED_MOB_QUEST.get(Utilities.randomOr0(QuestsConfig.BREED_MOB_QUEST.size() - 1)), false);
         if (getVariant() instanceof BreedMobsQuestObject breedMobsQuestObject)
             this.breedMobsQuestObject = breedMobsQuestObject;
         else
@@ -35,10 +36,10 @@ public class BreedMobsQuest extends Quest {
         }
     }
 
-    public BreedMobsQuest(UUID uuid, int step1, int step2, String variant) {
+    public BreedMobsQuest(UUID uuid, int step1, int step2, String variant, boolean rewardReceived) {
         super(uuid, step1, step2, QuestsConfig.BREED_MOB_QUEST.stream()
                 .filter(object -> variant.equals(object.getInternalName()))
-                .findAny().orElse(null));
+                .findAny().orElse(null), rewardReceived);
         if (getVariant() instanceof BreedMobsQuestObject breedMobsQuestObject)
             this.breedMobsQuestObject = breedMobsQuestObject;
         else
@@ -53,10 +54,10 @@ public class BreedMobsQuest extends Quest {
     @Override
     public void save() {
         String sql = "INSERT INTO generic_quest_progress " +
-                "(year_day, uuid, quest, quest_variant, step_1_progress, step_2_progress) " +
-                "VALUES (?, ?, ?, ?, ?, ?) " +
+                "(year_day, uuid, quest, quest_variant, step_1_progress, step_2_progress, reward_received) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?) " +
                 "ON DUPLICATE KEY UPDATE " +
-                "quest = ?, quest_variant = ?, step_1_progress = ?, step_2_progress = ?, year_day = ?";
+                "quest = ?, quest_variant = ?, step_1_progress = ?, step_2_progress = ?, year_day = ?, reward_received = ?";
         try {
             PreparedStatement statement = Database.getDatabase().getConnection().prepareStatement(sql);
             int yearDay = Utilities.getYearDay();
@@ -68,11 +69,13 @@ public class BreedMobsQuest extends Quest {
             statement.setString(4, breedMobsQuestObject.getInternalName());
             statement.setInt(5, getStep1());
             statement.setInt(6, getStep2());
-            statement.setString(7, this.getClass().getSimpleName());
-            statement.setString(8, breedMobsQuestObject.getInternalName());
-            statement.setInt(9, getStep1());
-            statement.setInt(10, getStep2());
-            statement.setInt(11, yearDay);
+            statement.setInt(7, isRewardReceived() ? 1 : 0);
+            statement.setString(8, this.getClass().getSimpleName());
+            statement.setString(9, breedMobsQuestObject.getInternalName());
+            statement.setInt(10, getStep1());
+            statement.setInt(11, getStep2());
+            statement.setInt(12, yearDay);
+            statement.setInt(13, isRewardReceived() ? 1 : 0);
             statement.execute();
         } catch (SQLException exception) {
             exception.printStackTrace();
@@ -82,7 +85,7 @@ public class BreedMobsQuest extends Quest {
     @Override
     public TagResolver getTagResolvers() {
         TagResolver resolver = TagResolver.resolver(
-                Placeholder.unparsed("mob", breedMobsQuestObject.getEntityType().name()),
+                Placeholder.unparsed("mob", Utilities.formatName(breedMobsQuestObject.getEntityType().name())),
                 Placeholder.parsed("step_1_progress", getStep1() == breedMobsQuestObject.getAmount() ?
                         "<green>" + getStep1() + "</green>" : "<red>" + getStep1() + "</red>"),
                 Placeholder.parsed("step_1_total", String.valueOf(breedMobsQuestObject.getAmount())),
@@ -113,6 +116,11 @@ public class BreedMobsQuest extends Quest {
     @Override
     public Component getDisplayName() {
         return MiniMessage.miniMessage().deserialize(QuestsConfig.BREED_MOB_QUEST_NAME);
+    }
+
+    @Override
+    public List<String> getRewardCommand() {
+        return QuestsConfig.BREED_MOB_COMMANDS;
     }
 
     public void breed(LivingEntity entity) {

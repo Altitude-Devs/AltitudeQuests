@@ -27,7 +27,7 @@ public class CommandChangeQuest extends SubCommand {
 
     @Override
     public String getHelpMessage() {
-        return "\b";
+        return null;
     }
 
     @Override

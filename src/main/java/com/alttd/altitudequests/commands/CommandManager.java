@@ -34,7 +34,8 @@ public class CommandManager implements CommandExecutor, TabExecutor {
                 new CommandCreateScruff(),
                 new CommandChangeQuest(),
                 new CommandTurnIn(),
-                new CommandSetQuest());
+                new CommandSetQuest(),
+                new CommandGetReward());
     }
 
     @Override

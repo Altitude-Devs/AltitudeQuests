@@ -41,13 +41,15 @@ public abstract class Quest {
     private int step2;
     private final Variant variant;
     private boolean isDone;
+    private boolean rewardReceived;
 
-    public Quest(UUID uuid, int step1, int step2, Variant variant) {
+    public Quest(UUID uuid, int step1, int step2, Variant variant, boolean rewardReceived) {
         this.uuid = uuid;
         this.step1 = step1;
         this.step2 = step2;
         this.variant = variant;
-        this.isDone = false;
+        this.isDone = rewardReceived;
+        this.rewardReceived = rewardReceived;
     }
 
     public static void createDailyQuest(Player player) {
@@ -112,7 +114,7 @@ public abstract class Quest {
         }
     }
 
-    public static boolean loadDailyQuest(String quest, String quest_variant, int step_1_progress, int step_2_progress, UUID uuid) {
+    public static boolean loadDailyQuest(String quest, String quest_variant, int step_1_progress, int step_2_progress, UUID uuid, boolean turnedIn) {
         Optional<Class<? extends Quest>> any = possibleQuests.stream()
                 .filter(q -> q.getSimpleName().equals(quest))
                 .findAny();
@@ -123,8 +125,8 @@ public abstract class Quest {
         Class<? extends Quest> aClass = any.get();
         Constructor<? extends Quest> constructor;
         try {
-            constructor = aClass.getConstructor(UUID.class, int.class, int.class, String.class);
-            Quest quest1 = constructor.newInstance(uuid, step_1_progress, step_2_progress, quest_variant);
+            constructor = aClass.getConstructor(UUID.class, int.class, int.class, String.class, boolean.class);
+            Quest quest1 = constructor.newInstance(uuid, step_1_progress, step_2_progress, quest_variant, turnedIn);
             dailyQuests.put(uuid, quest1);
         } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
             e.printStackTrace();
@@ -157,6 +159,8 @@ public abstract class Quest {
     public abstract int turnIn(Player player);
 
     public abstract Component getDisplayName();
+
+    public abstract List<String> getRewardCommand();
 
     public List<String> getQuestPages() {
         return variant.getQuestPages();
@@ -212,6 +216,14 @@ public abstract class Quest {
 
     public boolean isDone() {
         return isDone;
+    }
+
+    public boolean isRewardReceived() {
+        return rewardReceived;
+    }
+
+    public void setRewardReceived(boolean rewardReceived) {
+        this.rewardReceived = rewardReceived;
     }
 
     public int getMaxToTurnIn() {

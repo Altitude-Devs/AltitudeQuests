@@ -35,7 +35,7 @@ public class PluginMessageListener implements org.bukkit.plugin.messaging.Plugin
                 }
                 UUID uuid = UUID.fromString(in.readUTF());
                 if (Config.DEBUG)
-                    Logger.warning("Received positive log result for %, loading user", uuid.toString());
+                    Logger.info("Received positive log result for %, loading user", uuid.toString());
                 loadUser(uuid);
             }
             case "queue-lock-failed" -> Logger.warning("Encountered uuid that was locked and had a lock queued: %, lock is from %", in.readUTF(), in.readUTF());
@@ -53,7 +53,7 @@ public class PluginMessageListener implements org.bukkit.plugin.messaging.Plugin
                 }
                 UUID uuid = UUID.fromString(in.readUTF());
                 if (Config.DEBUG)
-                    Logger.warning("Received positive log result for %, loading user", uuid.toString());
+                    Logger.info("Received positive log result for %, loading user", uuid.toString());
                 loadUser(uuid);
             }
             case "check-lock-result" -> {
@@ -71,16 +71,19 @@ public class PluginMessageListener implements org.bukkit.plugin.messaging.Plugin
                     PreparedStatement statement = Database.getDatabase().getConnection().prepareStatement(sql);
                     statement.setString(1, uuid.toString());
                     ResultSet resultSet = statement.executeQuery();
-                    if (resultSet.next() && resultSet.getInt("year_day") < Utilities.getYearDay()) {
-                        Quest.loadDailyQuest(
+                    if (resultSet.next() && resultSet.getInt("year_day") == Utilities.getYearDay()) {
+                        if (Quest.loadDailyQuest(
                                 resultSet.getString("quest"),
                                 resultSet.getString("quest_variant"),
                                 resultSet.getInt("step_1_progress"),
                                 resultSet.getInt("step_2_progress"),
-                                uuid);
-                        if (Config.DEBUG)
-                            Logger.info("Loading daily quest for %", uuid.toString());
-                        return;
+                                uuid,
+                                resultSet.getInt("reward_received") == 1)) {
+                            if (Config.DEBUG)
+                                Logger.info("Loading daily quest for %", uuid.toString());
+                            return;
+                        } else
+                            Logger.warning("Unable to load quest for %, creating new quest...", uuid.toString());
                     }
                 } catch (SQLException exception) {
                     exception.printStackTrace();

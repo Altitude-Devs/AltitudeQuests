@@ -22,6 +22,7 @@ public class CommandHelp extends SubCommand {
     public boolean onCommand(CommandSender commandSender, String[] args) {
         commandSender.sendMiniMessage(MessagesConfig.HELP_MESSAGE_WRAPPER.replaceAll("<commands>", commandManager
                         .getSubCommands().stream()
+                        .filter(SubCommand::shouldTabComplete)
                         .filter(subCommand -> commandSender.hasPermission(subCommand.getPermission()))
                         .map(SubCommand::getHelpMessage)
                         .collect(Collectors.joining("\n"))), null);

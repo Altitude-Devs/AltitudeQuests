@@ -26,7 +26,7 @@ public class CommandSetQuest extends SubCommand {
             commandSender.sendMiniMessage(getHelpMessage(), null);
             return true;
         }
-        if (!Quest.loadDailyQuest(args[2], args[3], 0, 0, player.getUniqueId()))
+        if (!Quest.loadDailyQuest(args[2], args[3], 0, 0, player.getUniqueId(), false))
             commandSender.sendMiniMessage("<red>Unable to create quest <quest> of variant <variant>.</red>",
                     TagResolver.resolver(Placeholder.parsed("quest", args[2]),
                             Placeholder.parsed("variant", args[3])));

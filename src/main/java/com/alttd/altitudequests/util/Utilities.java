@@ -21,4 +21,9 @@ public class Utilities {
         calendar.setTime(new Date());
         return (calendar.get(Calendar.YEAR) * 1000) + calendar.get(Calendar.DAY_OF_YEAR);
     }
+
+    public static String formatName(String name) {
+        name = name.toLowerCase().replaceAll("_", " ");
+        return name.replace(name.charAt(0), Character.toUpperCase(name.charAt(0)));
+    }
 }
