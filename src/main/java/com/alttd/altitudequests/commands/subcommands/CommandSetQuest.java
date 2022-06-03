@@ -1,5 +1,6 @@
 package com.alttd.altitudequests.commands.subcommands;
 
+import com.alttd.altitudequests.AQuest;
 import com.alttd.altitudequests.commands.SubCommand;
 import com.alttd.altitudequests.config.MessagesConfig;
 import com.alttd.altitudequests.objects.Quest;
@@ -8,6 +9,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,13 +28,18 @@ public class CommandSetQuest extends SubCommand {
             commandSender.sendMiniMessage(getHelpMessage(), null);
             return true;
         }
-        if (!Quest.loadDailyQuest(args[2], args[3], 0, 0, player.getUniqueId(), false))
-            commandSender.sendMiniMessage("<red>Unable to create quest <quest> of variant <variant>.</red>",
-                    TagResolver.resolver(Placeholder.parsed("quest", args[2]),
-                            Placeholder.parsed("variant", args[3])));
-        commandSender.sendMiniMessage("<green>Created quest <quest> of variant <variant>.</green>",
-                TagResolver.resolver(Placeholder.parsed("quest", args[2]),
-                        Placeholder.parsed("variant", args[3])));
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (!Quest.loadDailyQuest(args[2], args[3], 0, 0, player.getUniqueId(), false))
+                    commandSender.sendMiniMessage("<red>Unable to create quest <quest> of variant <variant>.</red>",
+                            TagResolver.resolver(Placeholder.parsed("quest", args[2]),
+                                    Placeholder.parsed("variant", args[3])));
+                commandSender.sendMiniMessage("<green>Created quest <quest> of variant <variant>.</green>",
+                        TagResolver.resolver(Placeholder.parsed("quest", args[2]),
+                                Placeholder.parsed("variant", args[3])));
+            }
+        }.runTaskAsynchronously(AQuest.getInstance());
         return true;
     }
 
