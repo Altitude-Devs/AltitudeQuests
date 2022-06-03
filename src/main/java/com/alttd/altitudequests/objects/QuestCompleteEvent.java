@@ -5,15 +5,17 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-public class QuestCompleteEvent extends Event{
+public class QuestCompleteEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
     final private Player player;
-    final private Quest quest;
+    final private Variant variant;
+    final private int amount;
     final boolean daily;
 
     public QuestCompleteEvent(Player player, Quest quest, boolean daily) {
         this.player = player;
-        this.quest = quest;
+        this.variant = quest.getVariant();
+        this.amount = quest.getAmount();
         this.daily = daily;
     }
 
@@ -21,8 +23,12 @@ public class QuestCompleteEvent extends Event{
         return player;
     }
 
-    public Quest getQuest() {
-        return quest;
+    public Variant getVariant() {
+        return variant;
+    }
+
+    public int getAmount() {
+        return amount;
     }
 
     public boolean isDaily() {

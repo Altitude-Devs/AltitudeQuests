@@ -209,14 +209,29 @@ public abstract class Quest {
         checkDone();
         if (!isDone)
             return;
-        //TODO add completed quest to database
-        saveDone(player);
+        saveDone();
         QuestCompleteEvent event = new QuestCompleteEvent(player, this, true);
         event.callEvent();
     }
 
-    private void saveDone(Player player) {
-
+    private void saveDone() {
+        try {
+            String sql = "INSERT INTO quest_log " +
+                    "(uuid, year, month, day) " +
+                    "VALUES (?, ?, ?, ?)";
+            PreparedStatement statement = Database.getDatabase().getConnection().prepareStatement(sql);
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(new Date());
+            statement.setString(1, uuid.toString());
+            statement.setInt(2, calendar.get(Calendar.YEAR));
+            statement.setInt(3, calendar.get(Calendar.MONTH));
+            statement.setInt(4, calendar.get(Calendar.DAY_OF_MONTH));
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Logger.severe("Error while trying to create quest log table");
+            Logger.severe("Shutting down AltitudeQuests");
+            Bukkit.getPluginManager().disablePlugin(AQuest.getInstance());
+        }
     }
 
     public Variant getVariant() {
