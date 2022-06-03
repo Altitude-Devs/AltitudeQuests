@@ -34,6 +34,8 @@ public class CommandTurnIn extends SubCommand {
             return true;
         }
         dailyQuest.turnIn(player);
+        if (dailyQuest.isDone())
+            player.sendMiniMessage(MessagesConfig.FINISHED_QUEST, Placeholder.component("player", player.name()));
         BookOpener.openBook(player);
         return true;
     }
