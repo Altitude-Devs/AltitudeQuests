@@ -3,6 +3,7 @@ package com.alttd.altitudequests.objects;
 import com.alttd.altitudequests.AQuest;
 import com.alttd.altitudequests.config.Config;
 import com.alttd.altitudequests.config.MessagesConfig;
+import com.alttd.altitudequests.database.Database;
 import com.alttd.altitudequests.objects.quests.BreedMobsQuest;
 import com.alttd.altitudequests.objects.quests.CollectDropsQuest;
 import com.alttd.altitudequests.objects.quests.KillMobsQuest;
@@ -20,6 +21,9 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -42,6 +46,7 @@ public abstract class Quest {
     private final Variant variant;
     private boolean isDone;
     private boolean rewardReceived;
+    private final int amount;
 
     public Quest(UUID uuid, int step1, int step2, Variant variant, boolean rewardReceived) {
         this.uuid = uuid;
@@ -50,6 +55,28 @@ public abstract class Quest {
         this.variant = variant;
         this.isDone = rewardReceived;
         this.rewardReceived = rewardReceived;
+        if (variant == null)
+            amount = 0;
+        else
+            amount = variant.calculateAmount(loadQuestsDoneThisMonth(uuid));
+    }
+
+    private int loadQuestsDoneThisMonth(UUID uuid) {
+        String sql = "SELECT COUNT(uuid) AS total FROM quest_log WHERE uuid = ? AND year = ? AND month = ?";
+        try {
+            PreparedStatement statement = Database.getDatabase().getConnection().prepareStatement(sql);
+            statement.setString(1, uuid.toString());
+            Calendar instance = Calendar.getInstance();
+            instance.setTime(new Date());
+            statement.setInt(2, instance.get(Calendar.YEAR));
+            statement.setInt(3, instance.get(Calendar.MONTH));
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next())
+                return resultSet.getInt("total");
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+        return 0;
     }
 
     public static void createDailyQuest(Player player) {
@@ -173,7 +200,7 @@ public abstract class Quest {
     protected void checkDone() {
         if (isDone())
             return;
-        if (getStep1() == variant.getAmount() && getStep2() == variant.getAmount()) {
+        if (getStep1() == getAmount() && getStep2() == getAmount()) {
             setDone(true);
         }
     }
@@ -182,6 +209,7 @@ public abstract class Quest {
         checkDone();
         if (!isDone)
             return;
+        //TODO add completed quest to database
         QuestCompleteEvent event = new QuestCompleteEvent(player, this, true);
         event.callEvent();
     }
@@ -227,6 +255,10 @@ public abstract class Quest {
     }
 
     public int getMaxToTurnIn() {
-        return Math.min(variant.getAmount() - getStep2(), getStep1() - getStep2());
+        return Math.min(getAmount() - getStep2(), getStep1() - getStep2());
+    }
+
+    public int getAmount() {
+        return amount;
     }
 }

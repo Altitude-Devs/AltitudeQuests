@@ -86,12 +86,12 @@ public class BreedMobsQuest extends Quest {
     public TagResolver getTagResolvers() {
         TagResolver resolver = TagResolver.resolver(
                 Placeholder.unparsed("mob", Utilities.formatName(breedMobsQuestObject.getEntityType().name())),
-                Placeholder.parsed("step_1_progress", getStep1() == breedMobsQuestObject.getAmount() ?
+                Placeholder.parsed("step_1_progress", getStep1() == getAmount() ?
                         "<green>" + getStep1() + "</green>" : "<red>" + getStep1() + "</red>"),
-                Placeholder.parsed("step_1_total", String.valueOf(breedMobsQuestObject.getAmount())),
-                Placeholder.parsed("step_2_progress", getStep2() == breedMobsQuestObject.getAmount() ?
+                Placeholder.parsed("step_1_total", String.valueOf(getAmount())),
+                Placeholder.parsed("step_2_progress", getStep2() == getAmount() ?
                         "<green>" + getStep2() + "</green>" : "<red>" + getStep2() + "</red>"),
-                Placeholder.parsed("step_2_total", String.valueOf(breedMobsQuestObject.getAmount())),
+                Placeholder.parsed("step_2_total", String.valueOf(getAmount())),
                 Placeholder.unparsed("step_1", QuestsConfig.BREED_STEP_1),
                 Placeholder.unparsed("step_2", QuestsConfig.BREED_STEP_2)
         );

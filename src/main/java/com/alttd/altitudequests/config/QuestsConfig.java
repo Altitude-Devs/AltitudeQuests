@@ -48,9 +48,10 @@ public class QuestsConfig extends AbstractConfig {
                 MINE_QUESTS.add(new MineQuestObject(key,
                         configurationSection.getString(key + ".name"),
                         material,
-                        configurationSection.getInt(key + ".amount"),
                         configurationSection.getStringList(key + ".quest-pages"),
-                        configurationSection.getStringList(key + ".done-pages")));
+                        configurationSection.getStringList(key + ".done-pages"),
+                        configurationSection.getInt(key + ".amount-min"),
+                        configurationSection.getInt(key + ".amount-max")));
             }
             catch (Exception e) {
                 e.printStackTrace();
@@ -84,9 +85,10 @@ public class QuestsConfig extends AbstractConfig {
                 KILL_MOB_QUEST.add(new KillMobsQuestObject(key,
                         configurationSection.getString(key + ".name"),
                         entityType,
-                        configurationSection.getInt(key + ".amount"),
                         configurationSection.getStringList(key + ".quest-pages"),
-                        configurationSection.getStringList(key + ".done-pages")));
+                        configurationSection.getStringList(key + ".done-pages"),
+                        configurationSection.getInt(key + ".amount-min"),
+                        configurationSection.getInt(key + ".amount-max")));
             }
             catch (Exception e) {
                 e.printStackTrace();
@@ -120,9 +122,10 @@ public class QuestsConfig extends AbstractConfig {
                 COLLECT_DROPS_QUEST.add(new CollectDropsQuestObject(key,
                         configurationSection.getString(key + ".name"),
                         item,
-                        configurationSection.getInt(key + ".amount"),
                         configurationSection.getStringList(key + ".quest-pages"),
-                        configurationSection.getStringList(key + ".done-pages")));
+                        configurationSection.getStringList(key + ".done-pages"),
+                        configurationSection.getInt(key + ".amount-min"),
+                        configurationSection.getInt(key + ".amount-max")));
             }
             catch (Exception e) {
                 e.printStackTrace();
@@ -156,9 +159,10 @@ public class QuestsConfig extends AbstractConfig {
                 BREED_MOB_QUEST.add(new BreedMobsQuestObject(key,
                         configurationSection.getString(key + ".name"),
                         entityType,
-                        configurationSection.getInt(key + ".amount"),
                         configurationSection.getStringList(key + ".quest-pages"),
-                        configurationSection.getStringList(key + ".done-pages")));
+                        configurationSection.getStringList(key + ".done-pages"),
+                        configurationSection.getInt(key + ".amount-min"),
+                        configurationSection.getInt(key + ".amount-max")));
             }
             catch (Exception e) {
                 e.printStackTrace();

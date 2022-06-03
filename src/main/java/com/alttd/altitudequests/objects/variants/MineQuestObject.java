@@ -9,9 +9,9 @@ public class MineQuestObject extends Variant {
 
     private final Material material;
 
-    public MineQuestObject(String internalName, String name, Material material, int amount,
-                           List<String> questPages, List<String> donePages) {
-        super(internalName, name, amount, questPages, donePages);
+    public MineQuestObject(String internalName, String name, Material material,
+                           List<String> questPages, List<String> donePages, int min, int max) {
+        super(internalName, name, questPages, donePages, min, max);
         this.material = material;
     }
 

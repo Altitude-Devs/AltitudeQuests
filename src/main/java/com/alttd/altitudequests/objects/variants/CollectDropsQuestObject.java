@@ -9,8 +9,9 @@ public class CollectDropsQuestObject extends Variant {
 
     private final Material material;
 
-    public CollectDropsQuestObject(String internalName, String name, Material item, int amount, List<String> questPages, List<String> donePages) {
-        super(internalName, name, amount, questPages, donePages);
+    public CollectDropsQuestObject(String internalName, String name, Material item,
+                                   List<String> questPages, List<String> donePages, int min, int max) {
+        super(internalName, name, questPages, donePages, min, max);
         this.material = item;
     }
 

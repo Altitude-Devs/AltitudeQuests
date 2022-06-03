@@ -86,12 +86,12 @@ public class KillMobsQuest extends Quest {
     public TagResolver getTagResolvers() {
         TagResolver resolver = TagResolver.resolver(
                 Placeholder.unparsed("mob", Utilities.formatName(killMobsQuestObject.getEntityType().name())),
-                Placeholder.parsed("step_1_progress", getStep1() == killMobsQuestObject.getAmount() ?
+                Placeholder.parsed("step_1_progress", getStep1() == getAmount() ?
                         "<green>" + getStep1() + "</green>" : "<red>" + getStep1() + "</red>"),
-                Placeholder.parsed("step_1_total", String.valueOf(killMobsQuestObject.getAmount())),
-                Placeholder.parsed("step_2_progress", getStep2() == killMobsQuestObject.getAmount() ?
+                Placeholder.parsed("step_1_total", String.valueOf(getAmount())),
+                Placeholder.parsed("step_2_progress", getStep2() == getAmount() ?
                         "<green>" + getStep2() + "</green>" : "<red>" + getStep2() + "</red>"),
-                Placeholder.parsed("step_2_total", String.valueOf(killMobsQuestObject.getAmount())),
+                Placeholder.parsed("step_2_total", String.valueOf(getAmount())),
                 Placeholder.unparsed("step_1", QuestsConfig.KILL_MOB_STEP_1),
                 Placeholder.unparsed("step_2", QuestsConfig.KILL_MOB_STEP_2)
         );

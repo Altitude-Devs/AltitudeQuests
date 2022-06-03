@@ -87,12 +87,12 @@ public class MineQuest extends Quest {
     public TagResolver getTagResolvers() {
         TagResolver resolver = TagResolver.resolver(
                 Placeholder.unparsed("block", Utilities.formatName(mineQuestObject.getMaterial().name())),
-                Placeholder.parsed("step_1_progress", getStep1() == mineQuestObject.getAmount() ?
+                Placeholder.parsed("step_1_progress", getStep1() == getAmount() ?
                         "<green>" + getStep1() + "</green>" : "<red>" + getStep1() + "</red>"),
-                Placeholder.parsed("step_1_total", String.valueOf(mineQuestObject.getAmount())),
-                Placeholder.parsed("step_2_progress", getStep2() == mineQuestObject.getAmount() ?
+                Placeholder.parsed("step_1_total", String.valueOf(getAmount())),
+                Placeholder.parsed("step_2_progress", getStep2() == getAmount() ?
                         "<green>" + getStep2() + "</green>" : "<red>" + getStep2() + "</red>"),
-                Placeholder.parsed("step_2_total", String.valueOf(mineQuestObject.getAmount())),
+                Placeholder.parsed("step_2_total", String.valueOf(getAmount())),
                 Placeholder.unparsed("step_1", QuestsConfig.MINE_STEP_1),
                 Placeholder.unparsed("step_2", QuestsConfig.MINE_STEP_2)
         );
@@ -120,11 +120,11 @@ public class MineQuest extends Quest {
                 .forEach(itemStack -> {
                     if (ref.tmpAmount == 0)
                         return;
-                    if (itemStack.getAmount() > ref.tmpAmount) {
-                        itemStack.setAmount(itemStack.getAmount() - ref.tmpAmount);
+                    if (getAmount() > ref.tmpAmount) {
+                        itemStack.setAmount(getAmount() - ref.tmpAmount);
                         ref.tmpAmount = 0;
                     } else {
-                        ref.tmpAmount -= itemStack.getAmount();
+                        ref.tmpAmount -= getAmount();
                         itemStack.setAmount(0);
                     }
                 });

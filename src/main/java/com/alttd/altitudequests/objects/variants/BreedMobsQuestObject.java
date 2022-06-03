@@ -9,9 +9,9 @@ public class BreedMobsQuestObject extends Variant {
 
     private final EntityType entityType;
 
-    public BreedMobsQuestObject(String internalName, String name, EntityType entityType, int amount,
-                               List<String> questPages, List<String> donePages) {
-        super(internalName, name, amount, questPages, donePages);
+    public BreedMobsQuestObject(String internalName, String name, EntityType entityType,
+                               List<String> questPages, List<String> donePages, int min, int max) {
+        super(internalName, name, questPages, donePages, min, max);
         this.entityType = entityType;
     }
 

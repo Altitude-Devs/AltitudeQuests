@@ -89,12 +89,12 @@ public class CollectDropsQuest extends Quest {
     public TagResolver getTagResolvers() {
         TagResolver resolver = TagResolver.resolver(
                 Placeholder.unparsed("item", Utilities.formatName(collectDropsQuestObject.getMaterial().name())),
-                Placeholder.parsed("step_1_progress", getStep1() == collectDropsQuestObject.getAmount() ?
+                Placeholder.parsed("step_1_progress", getStep1() == getAmount() ?
                         "<green>" + getStep1() + "</green>" : "<red>" + getStep1() + "</red>"),
-                Placeholder.parsed("step_1_total", String.valueOf(collectDropsQuestObject.getAmount())),
-                Placeholder.parsed("step_2_progress", getStep2() == collectDropsQuestObject.getAmount() ?
+                Placeholder.parsed("step_1_total", String.valueOf(getAmount())),
+                Placeholder.parsed("step_2_progress", getStep2() == getAmount() ?
                         "<green>" + getStep2() + "</green>" : "<red>" + getStep2() + "</red>"),
-                Placeholder.parsed("step_2_total", String.valueOf(collectDropsQuestObject.getAmount())),
+                Placeholder.parsed("step_2_total", String.valueOf(getAmount())),
                 Placeholder.unparsed("step_1", QuestsConfig.COLLECT_DROPS_STEP_1),
                 Placeholder.unparsed("step_2", QuestsConfig.COLLECT_DROPS_STEP_2),
                 Placeholder.unparsed("turn_in_text", QuestsConfig.COLLECT_DROPS_TURN_IN)
@@ -123,11 +123,11 @@ public class CollectDropsQuest extends Quest {
                 .forEach(itemStack -> {
                     if (ref.tmpAmount == 0)
                         return;
-                    if (itemStack.getAmount() > ref.tmpAmount) {
-                        itemStack.setAmount(itemStack.getAmount() - ref.tmpAmount);
+                    if (getAmount() > ref.tmpAmount) {
+                        itemStack.setAmount(getAmount() - ref.tmpAmount);
                         ref.tmpAmount = 0;
                     } else {
-                        ref.tmpAmount -= itemStack.getAmount();
+                        ref.tmpAmount -= getAmount();
                         itemStack.setAmount(0);
                     }
                 });
