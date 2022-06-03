@@ -98,12 +98,30 @@ public class Database {
                     "step_1_progress INT NOT NULL, " +
                     "step_2_progress INT NOT NULL, " +
                     "reward_received BIT(1) NOT NULL, " +
-                    "PRIMARY KEY (UUID)" +
+                    "PRIMARY KEY (uuid)" +
                     ")";
             getDatabase().getConnection().prepareStatement(sql).executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
             Logger.severe("Error while trying to create user point table");
+            Logger.severe("Shutting down AltitudeQuests");
+            Bukkit.getPluginManager().disablePlugin(AQuest.getInstance());
+        }
+    }
+
+    private static void createQuestLogTable() {
+        try {
+            String sql = "CREATE TABLE IF NOT EXISTS quest_log(" +
+                    "uuid VARCHAR(36) NOT NULL, " +
+                    "year INT NOT NULL, " +
+                    "month INT NOT NULL, " +
+                    "day INT NOT NULL, " +
+                    "PRIMARY KEY (uuid, year, month, day)" +
+                    ")";
+            getDatabase().getConnection().prepareStatement(sql).executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Logger.severe("Error while trying to create quest log table");
             Logger.severe("Shutting down AltitudeQuests");
             Bukkit.getPluginManager().disablePlugin(AQuest.getInstance());
         }

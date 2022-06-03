@@ -210,8 +210,13 @@ public abstract class Quest {
         if (!isDone)
             return;
         //TODO add completed quest to database
+        saveDone(player);
         QuestCompleteEvent event = new QuestCompleteEvent(player, this, true);
         event.callEvent();
+    }
+
+    private void saveDone(Player player) {
+
     }
 
     public Variant getVariant() {
