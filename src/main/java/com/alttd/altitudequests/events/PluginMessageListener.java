@@ -78,6 +78,7 @@ public class PluginMessageListener implements org.bukkit.plugin.messaging.Plugin
                                 resultSet.getInt("step_1_progress"),
                                 resultSet.getInt("step_2_progress"),
                                 uuid,
+                                resultSet.getInt("amount"),
                                 resultSet.getInt("reward_received") == 1)) {
                             if (Config.DEBUG)
                                 Logger.info("Loading daily quest for %", uuid.toString());

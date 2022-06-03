@@ -97,6 +97,7 @@ public class Database {
                     "quest_variant VARCHAR(36) NOT NULL, " +
                     "step_1_progress INT NOT NULL, " +
                     "step_2_progress INT NOT NULL, " +
+                    "amount INT NOT NULL, " +
                     "reward_received BIT(1) NOT NULL, " +
                     "PRIMARY KEY (uuid)" +
                     ")";

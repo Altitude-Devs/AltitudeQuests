@@ -28,7 +28,7 @@ public class CollectDropsQuest extends Quest {
 
     public CollectDropsQuest(UUID uuid) {
         super(uuid, 0, 0,
-                QuestsConfig.COLLECT_DROPS_QUEST.get(Utilities.randomOr0(QuestsConfig.COLLECT_DROPS_QUEST.size() - 1)), false);
+                QuestsConfig.COLLECT_DROPS_QUEST.get(Utilities.randomOr0(QuestsConfig.COLLECT_DROPS_QUEST.size() - 1)), -1, false);
         if (getVariant() instanceof CollectDropsQuestObject collectDropsQuestObject)
             this.collectDropsQuestObject = collectDropsQuestObject;
         else
@@ -39,10 +39,10 @@ public class CollectDropsQuest extends Quest {
         }
     }
 
-    public CollectDropsQuest(UUID uuid, int step1, int step2, String variant, boolean rewardReceived) {
+    public CollectDropsQuest(UUID uuid, int step1, int step2, String variant, int amount, boolean rewardReceived) {
         super(uuid, step1, step2, QuestsConfig.COLLECT_DROPS_QUEST.stream()
                 .filter(object -> variant.equals(object.getInternalName()))
-                .findAny().orElse(null), rewardReceived);
+                .findAny().orElse(null), amount, rewardReceived);
         if (getVariant() instanceof CollectDropsQuestObject collectDropsQuestObject)
             this.collectDropsQuestObject = collectDropsQuestObject;
         else
@@ -57,10 +57,10 @@ public class CollectDropsQuest extends Quest {
     @Override
     public void save() {
         String sql = "INSERT INTO generic_quest_progress " +
-                "(year_day, uuid, quest, quest_variant, step_1_progress, step_2_progress, reward_received) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?) " +
+                "(year_day, uuid, quest, quest_variant, step_1_progress, step_2_progress, amount, reward_received) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?) " +
                 "ON DUPLICATE KEY UPDATE " +
-                "quest = ?, quest_variant = ?, step_1_progress = ?, step_2_progress = ?, year_day = ?, reward_received = ?";
+                "quest = ?, quest_variant = ?, step_1_progress = ?, step_2_progress = ?, year_day = ?, amount = ?, reward_received = ?";
         try {
             PreparedStatement statement = Database.getDatabase().getConnection().prepareStatement(sql);
             int yearDay = Utilities.getYearDay();
@@ -72,13 +72,15 @@ public class CollectDropsQuest extends Quest {
             statement.setString(4, collectDropsQuestObject.getInternalName());
             statement.setInt(5, getStep1());
             statement.setInt(6, getStep2());
-            statement.setInt(7, isRewardReceived() ? 1 : 0);
-            statement.setString(8, this.getClass().getSimpleName());
-            statement.setString(9, collectDropsQuestObject.getInternalName());
-            statement.setInt(10, getStep1());
-            statement.setInt(11, getStep2());
-            statement.setInt(12, yearDay);
-            statement.setInt(13, isRewardReceived() ? 1 : 0);
+            statement.setInt(7, getAmount());
+            statement.setInt(8, isRewardReceived() ? 1 : 0);
+            statement.setString(9, this.getClass().getSimpleName());
+            statement.setString(10, collectDropsQuestObject.getInternalName());
+            statement.setInt(11, getStep1());
+            statement.setInt(12, getStep2());
+            statement.setInt(13, yearDay);
+            statement.setInt(14, getAmount());
+            statement.setInt(15, isRewardReceived() ? 1 : 0);
             statement.execute();
         } catch (SQLException exception) {
             exception.printStackTrace();
