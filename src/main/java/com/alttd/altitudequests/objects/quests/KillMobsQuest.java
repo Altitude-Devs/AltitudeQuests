@@ -126,7 +126,7 @@ public class KillMobsQuest extends Quest {
     }
 
     public void kill(LivingEntity entity) {
-        if (isDone() || !entity.getType().equals(killMobsQuestObject.getEntityType()) || !entity.hasAI())
+        if (isDone() || !entity.getType().equals(killMobsQuestObject.getEntityType()) || !entity.hasAI() || getAmount() == getStep1())
             return;
         addStep1(1);
         checkDone();

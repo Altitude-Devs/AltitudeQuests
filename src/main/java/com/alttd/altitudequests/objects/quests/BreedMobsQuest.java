@@ -126,7 +126,7 @@ public class BreedMobsQuest extends Quest {
     }
 
     public void breed(LivingEntity entity) {
-        if (isDone() || !entity.getType().equals(breedMobsQuestObject.getEntityType()))
+        if (isDone() || !entity.getType().equals(breedMobsQuestObject.getEntityType()) || getAmount() == getStep1())
             return;
         addStep1(1);
         checkDone();

@@ -150,7 +150,7 @@ public class CollectDropsQuest extends Quest {
     }
 
     public void collectDrops(List<ItemStack> drops) {
-        if (isDone())
+        if (isDone() || getAmount() == getStep1())
             return;
         int total = drops.stream()
                 .filter(itemStack -> itemStack.getType().equals(collectDropsQuestObject.getMaterial()))
@@ -158,7 +158,7 @@ public class CollectDropsQuest extends Quest {
                 .sum();
         if (total == 0)
             return;
-        addStep1(total);
+        addStep1(Math.min(total, getAmount() - getStep1()));
         checkDone();
     }
 }

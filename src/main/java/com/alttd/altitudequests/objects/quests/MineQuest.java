@@ -147,7 +147,7 @@ public class MineQuest extends Quest {
     }
 
     public void mine(Block block) {
-        if (isDone() || !block.getType().equals(mineQuestObject.getMaterial()))
+        if (isDone() || !block.getType().equals(mineQuestObject.getMaterial()) || getAmount() == getStep1())
             return;
         addStep1(1);
         checkDone();
