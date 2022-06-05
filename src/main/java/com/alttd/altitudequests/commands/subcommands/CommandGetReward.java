@@ -41,6 +41,7 @@ public class CommandGetReward extends SubCommand {
         }
         for (String command : dailyQuest.getRewardCommand())
             Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command.replaceAll("<player>", commandSender.getName()));
+        dailyQuest.setRewardReceived(true);
         player.sendMiniMessage(MessagesConfig.REWARD_SENT, null);
         return true;
     }
