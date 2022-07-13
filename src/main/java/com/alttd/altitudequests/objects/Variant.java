@@ -1,5 +1,7 @@
 package com.alttd.altitudequests.objects;
 
+import com.alttd.altitudequests.config.Config;
+import com.alttd.altitudequests.util.Logger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
@@ -43,7 +45,9 @@ public abstract class Variant {
         double difficultyOffset = ((rangeMax - rangeMin) / (double) getDaysInMonth());
         int min = Math.max(rangeMin, rangeMin + (int) (difficultyOffset * (questsCompleted - 5)));
         int max = Math.min(rangeMax, rangeMin + (int) (difficultyOffset * (questsCompleted + 5)));
-        return new Random().nextInt(min, max);
+        if (Config.DEBUG)
+            Logger.info("variant: %, min: %, max: %", internalName, String.valueOf(min), String.valueOf(max));
+        return min == max ? min : new Random().nextInt(min, max);
     }
 
     private int getDaysInMonth() {

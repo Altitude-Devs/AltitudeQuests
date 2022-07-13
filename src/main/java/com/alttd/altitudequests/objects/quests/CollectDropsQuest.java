@@ -4,6 +4,7 @@ import com.alttd.altitudequests.config.Config;
 import com.alttd.altitudequests.config.QuestsConfig;
 import com.alttd.altitudequests.database.Database;
 import com.alttd.altitudequests.objects.Quest;
+import com.alttd.altitudequests.objects.Variant;
 import com.alttd.altitudequests.objects.variants.CollectDropsQuestObject;
 import com.alttd.altitudequests.util.Logger;
 import com.alttd.altitudequests.util.Utilities;
@@ -21,6 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class CollectDropsQuest extends Quest {
 
@@ -49,6 +51,7 @@ public class CollectDropsQuest extends Quest {
             this.collectDropsQuestObject = null;
         if (collectDropsQuestObject == null) {
             Logger.warning("Tried to create collectDropsQuest but unable to find variant: %.", variant);
+            Logger.warning("Possible variants: %", QuestsConfig.COLLECT_DROPS_QUEST.stream().map(Variant::getInternalName).collect(Collectors.joining(", ")));
             return;
         }
         checkDone();

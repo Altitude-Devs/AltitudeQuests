@@ -12,13 +12,14 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 public class LogoutEvent implements Listener {
+
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         UUID uuid = event.getPlayer().getUniqueId();
-
         new BukkitRunnable() {
             @Override
             public void run() {

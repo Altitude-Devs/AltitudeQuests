@@ -55,6 +55,9 @@ public abstract class Quest {
         this.variant = variant;
         this.isDone = rewardReceived;
         this.rewardReceived = rewardReceived;
+        if (variant == null) {
+            Logger.warning("Created % quest without a variant for %", this.getClass().getName(), uuid.toString());
+        }
         if (variant != null && amount == -1)
             this.amount = variant.calculateAmount(loadQuestsDoneThisMonth(uuid));
         else
@@ -107,7 +110,7 @@ public abstract class Quest {
         Quest.weeklyQuest = newQuest;
     }
 
-    private static HashSet<UUID> queriedUsers = new HashSet<>();
+    private static final HashSet<UUID> queriedUsers = new HashSet<>();
     public static void tryLoadDailyQuest(UUID uuid) {
         if (queriedUsers.contains(uuid) || dailyQuests.containsKey(uuid))
             return;
@@ -152,6 +155,16 @@ public abstract class Quest {
         Class<? extends Quest> aClass = any.get();
         Constructor<? extends Quest> constructor;
         try {
+            if (Config.DEBUG) {
+                Logger.info("quest: %, uuid: %, step1: %, step2: %, variant: %, amount: %, turnedIn:%",
+                        quest,
+                        uuid.toString(),
+                        String.valueOf(step_1_progress),
+                        String.valueOf(step_2_progress),
+                        quest_variant,
+                        String.valueOf(amount),
+                        String.valueOf(turnedIn));
+            }
             constructor = aClass.getConstructor(UUID.class, int.class, int.class, String.class, int.class, boolean.class);
             Quest quest1 = constructor.newInstance(uuid, step_1_progress, step_2_progress, quest_variant, amount, turnedIn);
             dailyQuests.put(uuid, quest1);
@@ -207,11 +220,17 @@ public abstract class Quest {
 
     public void checkDone(Player player) {
         checkDone();
-        if (!isDone)
+        if (!isDone())
             return;
-        saveDone();
-        QuestCompleteEvent event = new QuestCompleteEvent(player, this, true);
-        event.callEvent();
+        final Quest quest = this;
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                saveDone();
+                QuestCompleteEvent event = new QuestCompleteEvent(player, quest, true);
+                event.callEvent();
+            }
+        }.runTaskAsynchronously(AQuest.getInstance());
     }
 
     private void saveDone() {
@@ -226,6 +245,9 @@ public abstract class Quest {
             statement.setInt(2, calendar.get(Calendar.YEAR));
             statement.setInt(3, calendar.get(Calendar.MONTH));
             statement.setInt(4, calendar.get(Calendar.DAY_OF_MONTH));
+            statement.executeUpdate();
+            if (Config.DEBUG)
+                Logger.info("% finished their quest", uuid.toString());
         } catch (SQLException e) {
             e.printStackTrace();
             Logger.severe("Error while trying to create quest log table");

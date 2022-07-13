@@ -4,6 +4,7 @@ import com.alttd.altitudequests.config.Config;
 import com.alttd.altitudequests.config.QuestsConfig;
 import com.alttd.altitudequests.database.Database;
 import com.alttd.altitudequests.objects.Quest;
+import com.alttd.altitudequests.objects.Variant;
 import com.alttd.altitudequests.objects.variants.KillMobsQuestObject;
 import com.alttd.altitudequests.util.Logger;
 import com.alttd.altitudequests.util.Utilities;
@@ -18,6 +19,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class KillMobsQuest extends Quest {
 
@@ -46,6 +48,7 @@ public class KillMobsQuest extends Quest {
             this.killMobsQuestObject = null;
         if (killMobsQuestObject == null) {
             Logger.warning("Tried to create killMobsQuest but unable to find variant: %.", variant);
+            Logger.warning("Possible variants: %", QuestsConfig.KILL_MOB_QUEST.stream().map(Variant::getInternalName).collect(Collectors.joining(", ")));
             return;
         }
         checkDone();

@@ -3,6 +3,7 @@ package com.alttd.altitudequests.objects.quests;
 import com.alttd.altitudequests.config.Config;
 import com.alttd.altitudequests.config.QuestsConfig;
 import com.alttd.altitudequests.database.Database;
+import com.alttd.altitudequests.objects.Variant;
 import com.alttd.altitudequests.objects.variants.MineQuestObject;
 import com.alttd.altitudequests.objects.Quest;
 import com.alttd.altitudequests.util.Logger;
@@ -18,6 +19,7 @@ import org.bukkit.inventory.PlayerInventory;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class MineQuest extends Quest {
 
@@ -47,6 +49,7 @@ public class MineQuest extends Quest {
             this.mineQuestObject = null;
         if (mineQuestObject == null) {
             Logger.warning("Tried to create MineQuest but unable to find variant: %.", variant);
+            Logger.warning("Possible variants: %", QuestsConfig.MINE_QUESTS.stream().map(Variant::getInternalName).collect(Collectors.joining(", ")));
             return;
         }
         checkDone();
