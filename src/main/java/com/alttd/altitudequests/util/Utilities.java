@@ -13,7 +13,7 @@ public class Utilities {
     public static int randomOr0(int max) {
         if (max <= 1)
             return 0;
-        return new Random().nextInt(0, max - 1);
+        return new Random().nextInt(0, max);
     }
 
     public static int getYearDay() {
