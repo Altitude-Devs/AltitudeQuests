@@ -33,11 +33,15 @@ public abstract class Quest {
 //    private static Quest weeklyQuest = null;
     private static final List<Class<? extends Quest>> possibleQuests = new ArrayList<>();
 
-    static {
-        possibleQuests.add(MineQuest.class);
-        possibleQuests.add(KillMobsQuest.class);
-        possibleQuests.add(CollectDropsQuest.class);
-        possibleQuests.add(BreedMobsQuest.class);
+    static { // maybe make this make more sense idk
+        for (int i = 0; i < Config.MINE_QUEST_FREQ; i++)
+            possibleQuests.add(MineQuest.class);
+        for (int i = 0; i < Config.KILL_QUEST_FREQ; i++)
+            possibleQuests.add(KillMobsQuest.class);
+        for (int i = 0; i < Config.COLLECT_QUEST_FREQ; i++)
+            possibleQuests.add(CollectDropsQuest.class);
+        for (int i = 0; i < Config.BREED_QUEST_FREQ; i++)
+            possibleQuests.add(BreedMobsQuest.class);
     }
 
     private final UUID uuid;

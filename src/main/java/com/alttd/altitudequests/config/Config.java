@@ -44,4 +44,15 @@ public final class Config extends AbstractConfig {
         NPC_NAME = config.getString("settings.npc-name", NPC_NAME);
         DEBUG = config.getBoolean("settings.debug", DEBUG);
     }
+
+    public static int MINE_QUEST_FREQ = 1;
+    public static int KILL_QUEST_FREQ = 1;
+    public static int COLLECT_QUEST_FREQ = 1;
+    public static int BREED_QUEST_FREQ = 1;
+    private static void loadQuestTypeFrequency() {
+        MINE_QUEST_FREQ = config.getInt("quest-type-frequency.mine", MINE_QUEST_FREQ);
+        KILL_QUEST_FREQ = config.getInt("quest-type-frequency.kill", KILL_QUEST_FREQ);
+        COLLECT_QUEST_FREQ = config.getInt("quest-type-frequency.collect", COLLECT_QUEST_FREQ);
+        BREED_QUEST_FREQ = config.getInt("quest-type-frequency.breed", BREED_QUEST_FREQ);
+    }
 }
