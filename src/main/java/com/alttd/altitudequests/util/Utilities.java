@@ -24,6 +24,8 @@ public class Utilities {
 
     public static String formatName(String name) {
         name = name.toLowerCase().replaceAll("_", " ");
-        return name.replace(name.charAt(0), Character.toUpperCase(name.charAt(0)));
+        if (name.length() == 1)
+            return name.toUpperCase();
+        return name.substring(0, 1).toUpperCase() + name.substring(1);
     }
 }
