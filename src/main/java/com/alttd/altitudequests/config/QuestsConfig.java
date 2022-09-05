@@ -52,6 +52,8 @@ public class QuestsConfig extends AbstractConfig {
                         configurationSection.getStringList(key + ".done-pages"),
                         configurationSection.getInt(key + ".amount-min"),
                         configurationSection.getInt(key + ".amount-max")));
+                if (Config.DEBUG)
+                    Logger.info("Loaded Mine quest " + key);
             }
             catch (Exception e) {
                 e.printStackTrace();
@@ -89,6 +91,8 @@ public class QuestsConfig extends AbstractConfig {
                         configurationSection.getStringList(key + ".done-pages"),
                         configurationSection.getInt(key + ".amount-min"),
                         configurationSection.getInt(key + ".amount-max")));
+                if (Config.DEBUG)
+                    Logger.info("Loaded Kill mob quest " + key);
             }
             catch (Exception e) {
                 e.printStackTrace();
@@ -126,6 +130,8 @@ public class QuestsConfig extends AbstractConfig {
                         configurationSection.getStringList(key + ".done-pages"),
                         configurationSection.getInt(key + ".amount-min"),
                         configurationSection.getInt(key + ".amount-max")));
+                if (Config.DEBUG)
+                    Logger.info("Loaded Collect drops quest " + key);
             }
             catch (Exception e) {
                 e.printStackTrace();
@@ -163,6 +169,8 @@ public class QuestsConfig extends AbstractConfig {
                         configurationSection.getStringList(key + ".done-pages"),
                         configurationSection.getInt(key + ".amount-min"),
                         configurationSection.getInt(key + ".amount-max")));
+                if (Config.DEBUG)
+                    Logger.info("Loaded Breed mob quest " + key);
             }
             catch (Exception e) {
                 e.printStackTrace();
