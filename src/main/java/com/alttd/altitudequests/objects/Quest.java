@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 public abstract class Quest {
 
     private static final HashMap<UUID, Quest> dailyQuests = new HashMap<>();
-    private static Quest weeklyQuest = null;
+//    private static Quest weeklyQuest = null;
     private static final List<Class<? extends Quest>> possibleQuests = new ArrayList<>();
 
     static {
@@ -47,6 +47,30 @@ public abstract class Quest {
     private boolean isDone;
     private boolean rewardReceived;
     private final int amount;
+
+    public static synchronized void putDailyQuest(UUID uuid, Quest quest) {
+        dailyQuests.put(uuid, quest);
+    }
+
+    public static synchronized Quest removeDailyQuest(UUID uuid) {
+        return dailyQuests.remove(uuid);
+    }
+
+    public static synchronized Quest getDailyQuest(UUID uuid) {
+        return dailyQuests.getOrDefault(uuid, null);
+    }
+
+    public static synchronized boolean dailyQuestContainsKey(UUID uuid) {
+        return dailyQuests.containsKey(uuid);
+    }
+
+    public static synchronized Collection<Quest> getLoadedDailyQuests() {
+        return dailyQuests.values();
+    }
+
+    public static synchronized void clearDailyQuests() {
+        dailyQuests.clear();
+    }
 
     public Quest(UUID uuid, int step1, int step2, Variant variant, int amount, boolean rewardReceived) {
         this.uuid = uuid;
@@ -91,7 +115,7 @@ public abstract class Quest {
         Class<? extends Quest> questClass = possibleQuests.get(Utilities.randomOr0(possibleQuests.size() - 1));
         try {
             Constructor<? extends Quest> constructor = questClass.getDeclaredConstructor(UUID.class);
-            dailyQuests.put(player.getUniqueId(), constructor.newInstance(player.getUniqueId()));
+            putDailyQuest(player.getUniqueId(), constructor.newInstance(player.getUniqueId()));
         } catch (InvocationTargetException | IllegalAccessException | InstantiationException | NoSuchMethodException e) {
             player.sendMiniMessage("<red>Unable to create quest, contact an admin</red>", null);
             e.printStackTrace();
@@ -99,22 +123,17 @@ public abstract class Quest {
         }
     }
 
-    public static Quest getDailyQuest(UUID uuid) {
-        if (!dailyQuests.containsKey(uuid)) {
-           return null;
-        }
-        return dailyQuests.get(uuid);
-    }
+//    public static void setActiveWeeklyQuest(Quest newQuest) {
+//        Quest.weeklyQuest = newQuest;
+//    }
 
-    public static void setActiveWeeklyQuest(Quest newQuest) {
-        Quest.weeklyQuest = newQuest;
-    }
-
-    private static final HashSet<UUID> queriedUsers = new HashSet<>();
+//    private static final HashSet<UUID> queriedUsers = new HashSet<>();
     public static void tryLoadDailyQuest(UUID uuid) {
-        if (queriedUsers.contains(uuid) || dailyQuests.containsKey(uuid))
+//        if (queriedUsers.contains(uuid))
+//            return;
+        if (dailyQuestContainsKey(uuid))
             return;
-        queriedUsers.add(uuid);
+//        queriedUsers.add(uuid);
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -131,15 +150,15 @@ public abstract class Quest {
     }
 
     public static void unloadUser(UUID uuid) { //Pls only run async
-        queriedUsers.remove(uuid);
-        Quest quest = dailyQuests.remove(uuid);
+//        queriedUsers.remove(uuid);
+        Quest quest = removeDailyQuest(uuid);
         if (quest == null)
             return;
         quest.save();
     }
 
     public static void saveAll() {
-        for (Quest quest : dailyQuests.values()) {
+        for (Quest quest : getLoadedDailyQuests()) {
             quest.save();
         }
     }
@@ -167,7 +186,7 @@ public abstract class Quest {
             }
             constructor = aClass.getConstructor(UUID.class, int.class, int.class, String.class, int.class, boolean.class);
             Quest quest1 = constructor.newInstance(uuid, step_1_progress, step_2_progress, quest_variant, amount, turnedIn);
-            dailyQuests.put(uuid, quest1);
+            putDailyQuest(uuid, quest1);
         } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
             e.printStackTrace();
             return false;
@@ -184,7 +203,7 @@ public abstract class Quest {
             @Override
             public void run() {
                 Bukkit.getServer().sendMessage(MiniMessage.miniMessage().deserialize(MessagesConfig.RESETTING_QUESTS));
-                dailyQuests.clear();
+                clearDailyQuests();
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     createDailyQuest(player);
                 }
@@ -237,17 +256,20 @@ public abstract class Quest {
         try {
             String sql = "INSERT INTO quest_log " +
                     "(uuid, year, month, day) " +
-                    "VALUES (?, ?, ?, ?)";
+                    "VALUES (?, ?, ?, ?) " +
+                    "ON DUPLICATE KEY UPDATE uuid = ?";
             PreparedStatement statement = Database.getDatabase().getConnection().prepareStatement(sql);
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(new Date());
-            statement.setString(1, uuid.toString());
+            String uuidString = uuid.toString();
+            statement.setString(1, uuidString);
             statement.setInt(2, calendar.get(Calendar.YEAR));
             statement.setInt(3, calendar.get(Calendar.MONTH));
             statement.setInt(4, calendar.get(Calendar.DAY_OF_MONTH));
+            statement.setString(5, uuidString);
             statement.executeUpdate();
             if (Config.DEBUG)
-                Logger.info("% finished their quest", uuid.toString());
+                Logger.info("% finished their quest", uuidString);
         } catch (SQLException e) {
             e.printStackTrace();
             Logger.severe("Error while trying to create quest log table");
