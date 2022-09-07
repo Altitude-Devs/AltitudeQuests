@@ -134,4 +134,8 @@ public class KillMobsQuest extends Quest {
         addStep1(1);
         checkDone();
     }
+
+    public static List<String> getSubTypes() {
+        return QuestsConfig.KILL_MOB_QUEST.stream().map(Variant::getInternalName).collect(Collectors.toList());
+    }
 }

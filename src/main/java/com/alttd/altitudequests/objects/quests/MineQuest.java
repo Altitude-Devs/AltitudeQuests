@@ -155,4 +155,8 @@ public class MineQuest extends Quest {
         addStep1(1);
         checkDone();
     }
+
+    public static List<String> getSubTypes() {
+        return QuestsConfig.MINE_QUESTS.stream().map(Variant::getInternalName).collect(Collectors.toList());
+    }
 }

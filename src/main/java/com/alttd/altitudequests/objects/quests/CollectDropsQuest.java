@@ -164,4 +164,8 @@ public class CollectDropsQuest extends Quest {
         addStep1(Math.min(total, getAmount() - getStep1()));
         checkDone();
     }
+
+    public static List<String> getSubTypes() {
+        return QuestsConfig.COLLECT_DROPS_QUEST.stream().map(Variant::getInternalName).collect(Collectors.toList());
+    }
 }

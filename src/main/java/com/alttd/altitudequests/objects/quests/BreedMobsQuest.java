@@ -134,4 +134,8 @@ public class BreedMobsQuest extends Quest {
         addStep1(1);
         checkDone();
     }
+
+    public static List<String> getSubTypes() {
+        return QuestsConfig.BREED_MOB_QUEST.stream().map(Variant::getInternalName).collect(Collectors.toList());
+    }
 }
