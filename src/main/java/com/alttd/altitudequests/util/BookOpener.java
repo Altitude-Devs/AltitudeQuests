@@ -41,11 +41,12 @@ public class BookOpener {
                 dailyQuest.getTagResolvers()
         );
         //TODO add weekly quest?
-        List<String> pages = new ArrayList<>(Config.QUEST_PAGES);
+        List<String> pages = new ArrayList<>();
         if (dailyQuest.isDone())
             pages.addAll(dailyQuest.getDonePages());
         else
             pages.addAll(dailyQuest.getQuestPages());
+        pages.addAll(Config.QUEST_PAGES);
         return (pages.stream()
                 .map(page -> miniMessage.deserialize(page, tagResolver))
                 .collect(Collectors.toList()));
