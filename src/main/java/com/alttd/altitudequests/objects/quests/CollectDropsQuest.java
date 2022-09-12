@@ -128,11 +128,11 @@ public class CollectDropsQuest extends Quest {
                 .forEach(itemStack -> {
                     if (ref.tmpAmount == 0)
                         return;
-                    if (getAmount() > ref.tmpAmount) {
-                        itemStack.setAmount(getAmount() - ref.tmpAmount);
+                    if (itemStack.getAmount() > ref.tmpAmount) {
+                        itemStack.setAmount(itemStack.getAmount() - ref.tmpAmount);
                         ref.tmpAmount = 0;
                     } else {
-                        ref.tmpAmount -= getAmount();
+                        ref.tmpAmount -= itemStack.getAmount();
                         itemStack.setAmount(0);
                     }
                 });
