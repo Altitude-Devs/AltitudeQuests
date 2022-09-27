@@ -45,4 +45,5 @@ tasks {
 
 dependencies {
     compileOnly("com.alttd:Galaxy-API:1.19-R0.1-SNAPSHOT")
+    implementation("com.alttd:DataLockLib:1.0.0-SNAPSHOT")
 }
