@@ -17,6 +17,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -62,7 +63,7 @@ public class CommandSetQuest extends SubCommand {
                     .collect(Collectors.toList()));
             case 3 -> res.addAll(Quest.getTypes());
             case 4 -> {
-                switch (args[3].toLowerCase()) {
+                switch (args[2].toLowerCase()) {
                     case "breedmobsquest" -> res.addAll(BreedMobsQuest.getSubTypes());
                     case "collectdropsquest" -> res.addAll(CollectDropsQuest.getSubTypes());
                     case "killmobsquest" -> res.addAll(KillMobsQuest.getSubTypes());
@@ -71,7 +72,9 @@ public class CommandSetQuest extends SubCommand {
                 }
             }
         }
-        return res;
+        return res.stream()
+                .filter(entry -> entry.toLowerCase().startsWith(args[args.length - 1].toLowerCase()))
+                .collect(Collectors.toList());
     }
 
     @Override
