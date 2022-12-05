@@ -6,6 +6,7 @@ import com.alttd.altitudequests.events.*;
 import com.alttd.altitudequests.objects.Quest;
 import com.alttd.altitudequests.util.Logger;
 import com.alttd.altitudequests.util.Utilities;
+import com.alttd.datalock.DataLockAPI;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -28,6 +29,14 @@ public final class AQuest extends JavaPlugin {
         registerEvents();
         new CommandManager();
         scheduleTasks();
+        DataLockAPI dataLockAPI = DataLockAPI.get();
+        if (dataLockAPI == null) {
+            Logger.severe("Unable to load datalockapi");
+        } else if (dataLockAPI.isActiveChannel("aquest")) {
+            Logger.warning("Unable to register aquest channel");
+        } else {
+            dataLockAPI.registerChannel("aquest:player-data");
+        }
 
         Logger.info("--------------------------------------------------");
         Logger.info("AQuest started");
@@ -59,8 +68,8 @@ public final class AQuest extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new EntityBucketed(), this);
         getServer().getPluginManager().registerEvents(new EntityBreed(), this);
         getServer().getPluginManager().registerEvents(new DonNotMessWithNPC(), this);
-        getServer().getMessenger().registerOutgoingPluginChannel(this, "aquest:player-data");
-        getServer().getMessenger().registerIncomingPluginChannel(this, "aquest:player-data", new PluginMessageListener());
+//        getServer().getMessenger().registerOutgoingPluginChannel(this, "aquest:player-data");
+//        getServer().getMessenger().registerIncomingPluginChannel(this, "aquest:player-data", new PluginMessageListener());
     }
 
     private static int yearDay = Utilities.getYearDay();

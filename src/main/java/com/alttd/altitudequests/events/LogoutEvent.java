@@ -4,6 +4,7 @@ import com.alttd.altitudequests.AQuest;
 import com.alttd.altitudequests.config.Config;
 import com.alttd.altitudequests.objects.Quest;
 import com.alttd.altitudequests.util.Logger;
+import com.alttd.datalock.DataLockAPI;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import org.bukkit.Bukkit;
@@ -26,12 +27,7 @@ public class LogoutEvent implements Listener {
                 if (Config.DEBUG)
                     Logger.info("Syncing %", event.getPlayer().getName());
                 Quest.unloadUser(uuid);
-                ByteArrayDataOutput out = ByteStreams.newDataOutput();
-                out.writeUTF("try-unlock");
-                out.writeUTF(uuid.toString());
-                Bukkit.getServer().sendPluginMessage(AQuest.getInstance(),
-                        "aquest:player-data",
-                        out.toByteArray());
+                DataLockAPI.get().tryUnlock("aquest:player-data", uuid.toString());
             }
         }.runTaskAsynchronously(AQuest.getInstance());
     }
