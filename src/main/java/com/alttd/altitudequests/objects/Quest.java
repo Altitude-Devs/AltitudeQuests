@@ -10,8 +10,7 @@ import com.alttd.altitudequests.objects.quests.KillMobsQuest;
 import com.alttd.altitudequests.objects.quests.MineQuest;
 import com.alttd.altitudequests.util.Logger;
 import com.alttd.altitudequests.util.Utilities;
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
+import com.alttd.datalock.DataLockAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
@@ -141,12 +140,7 @@ public abstract class Quest {
         new BukkitRunnable() {
             @Override
             public void run() {
-                ByteArrayDataOutput out = ByteStreams.newDataOutput();
-                out.writeUTF("try-lock");
-                out.writeUTF(uuid.toString());
-                Bukkit.getServer().sendPluginMessage(AQuest.getInstance(),
-                        "aquest:player-data",
-                        out.toByteArray());
+                DataLockAPI.get().tryLock("aquest:player-data", uuid.toString());
                 if (Config.DEBUG)
                     Logger.info("Send lock request for %", uuid.toString());
             }
