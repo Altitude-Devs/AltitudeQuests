@@ -32,7 +32,7 @@ public final class AQuest extends JavaPlugin {
         DataLockAPI dataLockAPI = DataLockAPI.get();
         if (dataLockAPI == null) {
             Logger.severe("Unable to load datalockapi");
-        } else if (dataLockAPI.isActiveChannel("aquest")) {
+        } else if (dataLockAPI.isActiveChannel("aquest:player-data")) {
             Logger.warning("Unable to register aquest channel");
         } else {
             dataLockAPI.registerChannel("aquest:player-data");
