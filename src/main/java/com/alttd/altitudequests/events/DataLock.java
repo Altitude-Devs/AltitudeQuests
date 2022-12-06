@@ -1,6 +1,7 @@
 package com.alttd.altitudequests.events;
 
 import com.alttd.altitudequests.AQuest;
+import com.alttd.altitudequests.config.Config;
 import com.alttd.altitudequests.util.LoadUser;
 import com.alttd.altitudequests.util.Logger;
 import com.alttd.datalock.LockResponseEvent;
@@ -19,6 +20,9 @@ public class DataLock implements Listener {
         } catch (Exception e) {
             Logger.warning("Invalid data received from lock response event [%]", event.getData());
             return;
+        }
+        if (Config.DEBUG) {
+            Logger.info("Received lock response: channel: [%], response type: [%], data: [%]", event.getChannel(), event.getResponseType().toString(), event.getData());
         }
         switch (event.getResponseType()) {
             case TRY_LOCK_RESULT -> {
