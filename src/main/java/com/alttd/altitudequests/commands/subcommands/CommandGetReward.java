@@ -35,10 +35,16 @@ public class CommandGetReward extends SubCommand {
             return true;
         }
 
+        if (!dailyQuest.isDone()) {
+            player.sendMiniMessage(MessagesConfig.NOT_FINISHED_QUEST, null);
+            return true;
+        }
+
         if (dailyQuest.isRewardReceived()) {
             player.sendMiniMessage(MessagesConfig.REWARD_ALREADY_RECEIVED, null);
             return true;
         }
+
         for (String command : dailyQuest.getRewardCommand())
             Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command.replaceAll("<player>", commandSender.getName()));
         dailyQuest.setRewardReceived(true);
