@@ -22,5 +22,4 @@ public class MineBlocks implements Listener {
         if (quest instanceof MineQuest mineQuest)
             mineQuest.mine(event.getBlock());
     }
-
 }

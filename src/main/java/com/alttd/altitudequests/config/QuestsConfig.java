@@ -33,6 +33,8 @@ public class QuestsConfig extends AbstractConfig {
     public static String MINE_STEP_2 = "Turned in";
     public static String MINE_TURN_IN = "<gold>Click here to turn in your <block></gold>";
     public static List<String> MINE_COMMANDS = List.of("broadcast <player> Finished their daily quest!");
+    public static Material material;
+    public static Material turnInMaterial;
 
     private static void loadMineQuests() {
         MINE_QUESTS.clear();
@@ -44,10 +46,18 @@ public class QuestsConfig extends AbstractConfig {
         Set<String> keys = configurationSection.getKeys(false);
         for (String key : keys) {
             try {
-                Material material = Material.valueOf(configurationSection.getString(key + ".material"));
+                material = Material.valueOf(configurationSection.getString(key + ".material"));
+                if (configurationSection.getString(key + ".turnInMaterial") == null) {
+                    turnInMaterial = material;
+                }
+                else {
+                    turnInMaterial = Material.valueOf(configurationSection.getString(key + ".turnInMaterial"));
+                }
+
                 MINE_QUESTS.add(new MineQuestObject(key,
                         configurationSection.getString(key + ".name"),
                         material,
+                        turnInMaterial,
                         configurationSection.getStringList(key + ".quest-pages"),
                         configurationSection.getStringList(key + ".done-pages"),
                         configurationSection.getInt(key + ".amount-min"),

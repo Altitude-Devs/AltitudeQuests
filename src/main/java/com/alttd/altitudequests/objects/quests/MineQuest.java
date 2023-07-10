@@ -13,6 +13,8 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Ageable;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.PlayerInventory;
 
@@ -91,7 +93,7 @@ public class MineQuest extends Quest {
     @Override
     public TagResolver getTagResolvers() {
         TagResolver resolver = TagResolver.resolver(
-                Placeholder.unparsed("block", Utilities.formatName(mineQuestObject.getMaterial().name())),
+                Placeholder.unparsed("block", Utilities.formatName(mineQuestObject.getTurnInMaterial().name())),
                 Placeholder.parsed("step_1_progress", getStep1() == getAmount() ?
                         "<green>" + getStep1() + "</green>" : "<red>" + getStep1() + "</red>"),
                 Placeholder.parsed("step_1_total", String.valueOf(getAmount())),
@@ -121,7 +123,7 @@ public class MineQuest extends Quest {
 
         Arrays.stream(inventory.getContents())
                 .filter(Objects::nonNull)
-                .filter(itemStack -> itemStack.getType().equals(mineQuestObject.getMaterial()))
+                .filter(itemStack -> itemStack.getType().equals(mineQuestObject.getTurnInMaterial()))
                 .forEach(itemStack -> {
                     if (ref.tmpAmount == 0)
                         return;
@@ -149,8 +151,23 @@ public class MineQuest extends Quest {
         return QuestsConfig.MINE_COMMANDS;
     }
 
+    public boolean checkBlock(Block block) { //this can probably be simplified but I didn't realy know how
+
+        BlockData blockData = block.getBlockData();
+
+        if (!block.getType().equals(mineQuestObject.getMaterial())) {
+            return true;
+        }
+        else if (blockData instanceof Ageable) {
+            Ageable ageable = (Ageable) blockData;
+            if (ageable.getAge() != ageable.getMaximumAge()) {
+                return true;
+            }
+        }
+        return false;
+    }
     public void mine(Block block) {
-        if (isDone() || !block.getType().equals(mineQuestObject.getMaterial()) || getAmount() == getStep1())
+        if (isDone() || checkBlock(block) || getAmount() == getStep1())
             return;
         addStep1(1);
         checkDone();
