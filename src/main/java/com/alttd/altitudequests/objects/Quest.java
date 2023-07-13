@@ -4,10 +4,7 @@ import com.alttd.altitudequests.AQuest;
 import com.alttd.altitudequests.config.Config;
 import com.alttd.altitudequests.config.MessagesConfig;
 import com.alttd.altitudequests.database.Database;
-import com.alttd.altitudequests.objects.quests.BreedMobsQuest;
-import com.alttd.altitudequests.objects.quests.CollectDropsQuest;
-import com.alttd.altitudequests.objects.quests.KillMobsQuest;
-import com.alttd.altitudequests.objects.quests.MineQuest;
+import com.alttd.altitudequests.objects.quests.*;
 import com.alttd.altitudequests.util.Logger;
 import com.alttd.altitudequests.util.Utilities;
 import com.alttd.datalock.DataLockAPI;
@@ -41,6 +38,8 @@ public abstract class Quest {
             possibleQuests.add(CollectDropsQuest.class);
         for (int i = 0; i < Config.BREED_QUEST_FREQ; i++)
             possibleQuests.add(BreedMobsQuest.class);
+        for (int i = 0; i < Config.OTHER_QUEST_FRQ; i++)
+            possibleQuests.add(OtherQuest.class);
     }
 
     private final UUID uuid;

@@ -4,6 +4,7 @@ import com.alttd.altitudequests.objects.variants.BreedMobsQuestObject;
 import com.alttd.altitudequests.objects.variants.CollectDropsQuestObject;
 import com.alttd.altitudequests.objects.variants.KillMobsQuestObject;
 import com.alttd.altitudequests.objects.variants.MineQuestObject;
+import com.alttd.altitudequests.objects.variants.OtherQuestObject;
 import com.alttd.altitudequests.util.Logger;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -152,6 +153,48 @@ public class QuestsConfig extends AbstractConfig {
         COLLECT_DROPS_STEP_2 = config.getString("collect_drops.step-2", COLLECT_DROPS_STEP_2);
         COLLECT_DROPS_TURN_IN = config.getString("collect_drops.turn-in", COLLECT_DROPS_TURN_IN);
         COLLECT_DROPS_COMMANDS = config.getStringList("collect_drops.commands", COLLECT_DROPS_COMMANDS);
+    }
+
+    public static List<OtherQuestObject> OTHER_QUEST = new ArrayList<>();
+    public static String OTHER_QUEST_NAME = "<green>Other quest</green>";
+    public static String OTHER_STEP_1 = "Obtained";
+    public static String OTHER_STEP_2 = "Turned in";
+    public static String OTHER_TURN_IN = "<gold>Click here to turn in your <item></gold>";
+    public static List<String> OTHER_COMMANDS = List.of("broadcast <player> Finished their daily quest!");
+
+    private static void loadOtherQuests() {
+        OTHER_QUEST.clear();
+        ConfigurationSection configurationSection = config.getConfigurationSection("other.possible_tasks");
+        if (configurationSection == null) {
+            Logger.warning("No other quests in config");
+            return;
+        }
+        Set<String> keys = configurationSection.getKeys(false);
+        for (String key : keys) {
+            try {
+                Material item = Material.valueOf(configurationSection.getString(key + ".item"));
+                OTHER_QUEST.add(new OtherQuestObject(key,
+                        configurationSection.getString(key + ".name"),
+                        configurationSection.getString(key + ".category"),
+                        item,
+                        configurationSection.getStringList(key + ".quest-pages"),
+                        configurationSection.getStringList(key + ".done-pages"),
+                        configurationSection.getInt(key + ".amount-min"),
+                        configurationSection.getInt(key + ".amount-max"),
+                        configurationSection.getString(key + ".step-1"),
+                        configurationSection.getString(key + ".step-2")));
+                if (Config.DEBUG)
+                    Logger.info("Loaded Collect drops quest " + key);
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        OTHER_QUEST_NAME = config.getString("other.name", OTHER_QUEST_NAME);
+        OTHER_STEP_1 = config.getString("other.step-1", OTHER_STEP_1);
+        OTHER_STEP_2 = config.getString("other.step-2", OTHER_STEP_2);
+        OTHER_TURN_IN = config.getString("other.turn-in", OTHER_TURN_IN);
+        OTHER_COMMANDS = config.getStringList("other.commands", OTHER_COMMANDS);
     }
 
     public static List<BreedMobsQuestObject> BREED_MOB_QUEST = new ArrayList<>();
