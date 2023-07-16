@@ -1,0 +1,11 @@
+name: AQuests
+version: '${version}'
+main: com.alttd.altitudequests.AQuest
+api-version: 1.18
+authors: [ Teriuihi ]
+description: A plugin to run quests on a server
+depend:
+  - DataLockLib
+commands:
+  aquest:
+    permission: aquest.use
