@@ -12,10 +12,14 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import org.bukkit.DyeColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Sheep;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.entity.Entity;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -101,8 +105,8 @@ public class OtherQuest extends Quest {
                 Placeholder.parsed("step_2_progress", getStep2() == getAmount() ?
                         "<green>" + getStep2() + "</green>" : "<red>" + getStep2() + "</red>"),
                 Placeholder.parsed("step_2_total", String.valueOf(getAmount())),
-                Placeholder.unparsed("step_1", OtherQuestObject.getStep1()),
-                Placeholder.unparsed("step_2", OtherQuestObject.getStep2()),
+                Placeholder.unparsed("step_1", otherQuestObject.getStep1()),
+                Placeholder.unparsed("step_2", otherQuestObject.getStep2()),
                 Placeholder.unparsed("turn_in_text", QuestsConfig.OTHER_TURN_IN)
         );
         Component turnInText = MiniMessage.miniMessage().deserialize(QuestsConfig.OTHER_TURN_IN, resolver);
@@ -145,7 +149,8 @@ public class OtherQuest extends Quest {
 
     @Override
     public Component getDisplayName() {
-        return MiniMessage.miniMessage().deserialize(QuestsConfig.OTHER_QUEST_NAME+"<green>: </green>"+OtherQuestObject.getCategory());
+        return MiniMessage.miniMessage().deserialize("<green>%s: </green>".formatted( otherQuestObject.getCategory()));
+        //return MiniMessage.miniMessage().deserialize("%s<green>: </green>%s".formatted(QuestsConfig.OTHER_QUEST_NAME, otherQuestObject.getCategory()));
     }
 
     @Override
@@ -154,11 +159,36 @@ public class OtherQuest extends Quest {
     }
 
     public void fish(ItemStack caughtItem){
-        if (isDone() || !caughtItem.getType().equals(otherQuestObject.getMaterial()) ||getAmount() == getStep1())
+        if (isDone() || !caughtItem.getType().equals(otherQuestObject.getMaterial()) || getAmount() == getStep1()) {
             return;
+        }
         addStep1(1);
         checkDone();
     }
+
+    public void shear(Entity entity) {
+        if (isDone() || !entity.getType().equals(otherQuestObject.getEntity()) || getAmount() == getStep1()) {
+            return;
+        }
+        DyeColor color = getDyeColorFromItemStack(otherQuestObject.getMaterial());
+        if (entity instanceof Sheep) {
+            Sheep sheep = (Sheep) entity;
+            if (sheep.getColor() != color) {
+                return;
+            }
+        }
+        addStep1(1);
+        checkDone();
+    }
+
+    public void bucket(ItemStack bucket, Entity entity) {
+        if (isDone() || !entity.getType().equals(otherQuestObject.getEntity()) || getAmount() == getStep1()) {
+            return;
+        }
+        addStep1(1);
+        checkDone();
+    }
+
     public void raid(){}
     public void collectDrops(List<ItemStack> drops) {
         if (isDone() || getAmount() == getStep1())
@@ -173,7 +203,28 @@ public class OtherQuest extends Quest {
         checkDone();
     }
 
+    public void brewingStarted(ItemStack ingredient, Location brewingStandLocation){
+        Logger.warning("Brewing Started");
+    }
+
+    public void brewingFinished(List <ItemStack> results, Location brewingStandLocation) {
+        Logger.warning("Brewing Finished");
+    }
+
     public static List<String> getSubTypes() {
         return QuestsConfig.OTHER_QUEST.stream().map(Variant::getInternalName).collect(Collectors.toList());
     }
+
+    public static DyeColor getDyeColorFromItemStack(Material material) {
+        if (material != null && material.name().contains("_WOOL")) {
+            String colorName = material.name().replace("_WOOL", "");
+            try {
+                return DyeColor.valueOf(colorName);
+            } catch (IllegalArgumentException ignored) {
+                // This will be thrown if the color name doesn't match the enum
+            }
+        }
+        return null;
+    }
 }
+

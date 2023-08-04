@@ -1,14 +1,12 @@
 package com.alttd.altitudequests.events;
 
 import com.alttd.altitudequests.objects.Quest;
-import com.alttd.altitudequests.objects.quests.CollectDropsQuest;
+import com.alttd.altitudequests.objects.quests.OtherQuest;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerShearEntityEvent;
-
-import java.util.List;
 
 public class EntitySheared implements Listener {
 
@@ -18,8 +16,8 @@ public class EntitySheared implements Listener {
         Quest dailyQuest = Quest.getDailyQuest(player.getUniqueId());
         if (dailyQuest == null || dailyQuest.isDone())
             return;
-        if (dailyQuest instanceof CollectDropsQuest collectDropsQuest) {
-            collectDropsQuest.collectDrops(List.of(event.getItem()));
+        if (dailyQuest instanceof OtherQuest otherQuest) {
+            otherQuest.shear(event.getEntity());
         }
     }
 }

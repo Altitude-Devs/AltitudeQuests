@@ -4,10 +4,7 @@ import com.alttd.altitudequests.AQuest;
 import com.alttd.altitudequests.commands.SubCommand;
 import com.alttd.altitudequests.config.MessagesConfig;
 import com.alttd.altitudequests.objects.Quest;
-import com.alttd.altitudequests.objects.quests.BreedMobsQuest;
-import com.alttd.altitudequests.objects.quests.CollectDropsQuest;
-import com.alttd.altitudequests.objects.quests.KillMobsQuest;
-import com.alttd.altitudequests.objects.quests.MineQuest;
+import com.alttd.altitudequests.objects.quests.*;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Bukkit;
@@ -17,8 +14,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class CommandSetQuest extends SubCommand {
@@ -68,6 +63,7 @@ public class CommandSetQuest extends SubCommand {
                     case "collectdropsquest" -> res.addAll(CollectDropsQuest.getSubTypes());
                     case "killmobsquest" -> res.addAll(KillMobsQuest.getSubTypes());
                     case "minequest" -> res.addAll(MineQuest.getSubTypes());
+                    case "otherquest" -> res.addAll(OtherQuest.getSubTypes());
                     default -> res.add("invalid quest type");
                 }
             }

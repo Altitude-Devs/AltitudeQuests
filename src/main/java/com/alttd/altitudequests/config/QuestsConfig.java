@@ -157,10 +157,10 @@ public class QuestsConfig extends AbstractConfig {
 
     public static List<OtherQuestObject> OTHER_QUEST = new ArrayList<>();
     public static String OTHER_QUEST_NAME = "<green>Other quest</green>";
-    public static String OTHER_STEP_1 = "Obtained";
-    public static String OTHER_STEP_2 = "Turned in";
     public static String OTHER_TURN_IN = "<gold>Click here to turn in your <item></gold>";
     public static List<String> OTHER_COMMANDS = List.of("broadcast <player> Finished their daily quest!");
+    public static  Material item;
+    public static  EntityType entityType;
 
     private static void loadOtherQuests() {
         OTHER_QUEST.clear();
@@ -172,11 +172,23 @@ public class QuestsConfig extends AbstractConfig {
         Set<String> keys = configurationSection.getKeys(false);
         for (String key : keys) {
             try {
-                Material item = Material.valueOf(configurationSection.getString(key + ".item"));
+                if (configurationSection.getString(key + ".item") == null) {
+                    item = null;
+                }
+                else {
+                    item = Material.valueOf(configurationSection.getString(key + ".item"));
+                }
+                if (configurationSection.getString(key + ".mob") == null) {
+                    entityType = null;
+                }
+                else {
+                    entityType = EntityType.valueOf(configurationSection.getString(key + ".mob"));
+                }
                 OTHER_QUEST.add(new OtherQuestObject(key,
                         configurationSection.getString(key + ".name"),
                         configurationSection.getString(key + ".category"),
                         item,
+                        entityType,
                         configurationSection.getStringList(key + ".quest-pages"),
                         configurationSection.getStringList(key + ".done-pages"),
                         configurationSection.getInt(key + ".amount-min"),
@@ -191,8 +203,8 @@ public class QuestsConfig extends AbstractConfig {
             }
         }
         OTHER_QUEST_NAME = config.getString("other.name", OTHER_QUEST_NAME);
-        OTHER_STEP_1 = config.getString("other.step-1", OTHER_STEP_1);
-        OTHER_STEP_2 = config.getString("other.step-2", OTHER_STEP_2);
+        //OTHER_STEP_1 = config.getString("other.step-1", OTHER_STEP_1);
+        //OTHER_STEP_2 = config.getString("other.step-2", OTHER_STEP_2);
         OTHER_TURN_IN = config.getString("other.turn-in", OTHER_TURN_IN);
         OTHER_COMMANDS = config.getStringList("other.commands", OTHER_COMMANDS);
     }

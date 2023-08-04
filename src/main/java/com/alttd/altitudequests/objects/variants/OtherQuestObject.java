@@ -2,20 +2,23 @@ package com.alttd.altitudequests.objects.variants;
 
 import com.alttd.altitudequests.objects.Variant;
 import org.bukkit.Material;
+import org.bukkit.entity.EntityType;
 
 import java.util.List;
 
 public class OtherQuestObject extends Variant {
 
     private final Material material;
-    private static String step1 = null;
-    private static String step2 = null;
-    private static String category = null;
+    private final EntityType entity;
+    private final String step1;
+    private final String step2;
+    private final String category;
 
-    public OtherQuestObject(String internalName, String name, String category, Material item,
+    public OtherQuestObject(String internalName, String name, String category, Material item, EntityType entity,
                                    List<String> questPages, List<String> donePages, int min, int max, String step1, String step2) {
         super(internalName, name, questPages, donePages, min, max);
         this.material = item;
+        this.entity = entity;
         this.step1 = step1;
         this.step2 = step2;
         this.category = category;
@@ -24,7 +27,8 @@ public class OtherQuestObject extends Variant {
     public Material getMaterial() {
         return material;
     }
-    public static String getStep1() {return step1;}
-    public static String getStep2() {return step2;}
-    public static String getCategory() {return category;}
+    public EntityType getEntity() {return entity;}
+    public String getStep1() {return step1;}
+    public String getStep2() {return step2;}
+    public String getCategory() {return category;}
 }
