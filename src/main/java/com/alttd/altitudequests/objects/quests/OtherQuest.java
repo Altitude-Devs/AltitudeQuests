@@ -149,7 +149,7 @@ public class OtherQuest extends Quest {
 
     @Override
     public Component getDisplayName() {
-        return MiniMessage.miniMessage().deserialize("<green>%s: </green>".formatted( otherQuestObject.getCategory()));
+        return MiniMessage.miniMessage().deserialize("<green>%s</green>".formatted( otherQuestObject.getCategory()));
         //return MiniMessage.miniMessage().deserialize("%s<green>: </green>%s".formatted(QuestsConfig.OTHER_QUEST_NAME, otherQuestObject.getCategory()));
     }
 
@@ -189,17 +189,11 @@ public class OtherQuest extends Quest {
         checkDone();
     }
 
-    public void raid(){}
-    public void collectDrops(List<ItemStack> drops) {
-        if (isDone() || getAmount() == getStep1())
+    public void raid(){
+        if (isDone() || getAmount() == getStep1() || otherQuestObject.getCategory() != "Raid") {
             return;
-        int total = drops.stream()
-                .filter(itemStack -> itemStack.getType().equals(otherQuestObject.getMaterial()))
-                .mapToInt(ItemStack::getAmount)
-                .sum();
-        if (total == 0)
-            return;
-        addStep1(Math.min(total, getAmount() - getStep1()));
+        }
+        addStep1(1);
         checkDone();
     }
 
