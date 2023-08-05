@@ -21,7 +21,7 @@ public final class Config extends AbstractConfig {
 
     public static String QUEST_BOOK_AUTHOR = "<magenta>Scruff</magenta>";
     public static String QUEST_BOOK_TITLE = "<green>Quest Title</green>";
-    public static String PRGORESS_BOOK_AUTHOR = "<magenta>Scruff</magenta>";
+    public static String PROGRESS_BOOK_AUTHOR = "<magenta>Scruff</magenta>";
     public static String PROGRESS_BOOK_TITLE = "<green>Quest Title</green>";
     public static List<String> QUEST_PAGES = List.of("""
             <bold><gold>Hey <player></gold></bold>
@@ -51,9 +51,9 @@ public final class Config extends AbstractConfig {
     }
 
     private static void loadProgressBook() {
-        QUEST_BOOK_AUTHOR = config.getString("progressBook.author", PRGORESS_BOOK_AUTHOR);
-        QUEST_BOOK_TITLE = config.getString("progressBook.title", PROGRESS_BOOK_TITLE);
-        QUEST_PAGES = config.getStringList("progressBook.pages", PROGRESS_PAGES);
+        PROGRESS_BOOK_AUTHOR = config.getString("progressBook.author", PROGRESS_BOOK_AUTHOR);
+        PROGRESS_BOOK_TITLE = config.getString("progressBook.title", PROGRESS_BOOK_TITLE);
+        PROGRESS_PAGES = config.getStringList("progressBook.pages", PROGRESS_PAGES);
     }
 
     public static String NPC_NAME = "<light_purple>Scruff</light_purple>";
