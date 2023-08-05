@@ -35,7 +35,8 @@ public class CommandManager implements CommandExecutor, TabExecutor {
                 new CommandChangeQuest(),
                 new CommandTurnIn(),
                 new CommandSetQuest(),
-                new CommandGetReward());
+                new CommandGetReward(),
+                new CommandProgress());
     }
 
     @Override

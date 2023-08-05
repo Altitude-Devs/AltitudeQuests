@@ -21,6 +21,8 @@ public final class Config extends AbstractConfig {
 
     public static String QUEST_BOOK_AUTHOR = "<magenta>Scruff</magenta>";
     public static String QUEST_BOOK_TITLE = "<green>Quest Title</green>";
+    public static String PRGORESS_BOOK_AUTHOR = "<magenta>Scruff</magenta>";
+    public static String PROGRESS_BOOK_TITLE = "<green>Quest Title</green>";
     public static List<String> QUEST_PAGES = List.of("""
             <bold><gold>Hey <player></gold></bold>
     
@@ -32,10 +34,26 @@ public final class Config extends AbstractConfig {
             
             <click:run_command:/aquest turnin><turn_in_text></click>
             """);
+    public static List<String> PROGRESS_PAGES = List.of("""
+            <bold><gold>Hey <player></gold></bold>
+    
+            Your quest progress:
+            * Quest: <quest>
+            * Type: <variant>
+            * <step_1>: <step_1_progress>/<step_1_total>
+            * <step_2>: <step_2_progress>/<step_2_total>
+            
+            """);
     private static void loadBook() {
         QUEST_BOOK_AUTHOR = config.getString("book.author", QUEST_BOOK_AUTHOR);
         QUEST_BOOK_TITLE = config.getString("book.title", QUEST_BOOK_TITLE);
         QUEST_PAGES = config.getStringList("book.pages", QUEST_PAGES);
+    }
+
+    private static void loadProgressBook() {
+        QUEST_BOOK_AUTHOR = config.getString("progressBook.author", PRGORESS_BOOK_AUTHOR);
+        QUEST_BOOK_TITLE = config.getString("progressBook.title", PROGRESS_BOOK_TITLE);
+        QUEST_PAGES = config.getStringList("progressBook.pages", PROGRESS_PAGES);
     }
 
     public static String NPC_NAME = "<light_purple>Scruff</light_purple>";
