@@ -70,8 +70,8 @@ public final class AQuest extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new DonNotMessWithNPC(), this);
         getServer().getPluginManager().registerEvents(new DataLock(), this);
         getServer().getPluginManager().registerEvents(new ItemCaught(), this);
-        getServer().getPluginManager().registerEvents(new PotionBrewingStarted(), this);
-        getServer().getPluginManager().registerEvents(new PotionBrewingFinished(), this);
+//        getServer().getPluginManager().registerEvents(new PotionBrewingStarted(), this);
+//        getServer().getPluginManager().registerEvents(new PotionBrewingFinished(), this);
         getServer().getPluginManager().registerEvents(new FinishedRaid(), this);
 
 //        getServer().getMessenger().registerOutgoingPluginChannel(this, "aquest:player-data");

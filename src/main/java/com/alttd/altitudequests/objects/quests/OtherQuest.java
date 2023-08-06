@@ -13,7 +13,6 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.DyeColor;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -150,7 +149,6 @@ public class OtherQuest extends Quest {
     @Override
     public Component getDisplayName() {
         return MiniMessage.miniMessage().deserialize("<green>%s</green>".formatted( otherQuestObject.getCategory()));
-        //return MiniMessage.miniMessage().deserialize("%s<green>: </green>%s".formatted(QuestsConfig.OTHER_QUEST_NAME, otherQuestObject.getCategory()));
     }
 
     @Override
@@ -190,20 +188,20 @@ public class OtherQuest extends Quest {
     }
 
     public void raid(){
-        if (isDone() || getAmount() == getStep1() || otherQuestObject.getCategory() != "Raid") {
+        if (isDone() || getAmount() == getStep1() || !Objects.equals(otherQuestObject.getCategory(), "Raid")) { //without checking the category, other players who have otherQuests active will also have a step added
             return;
         }
         addStep1(1);
         checkDone();
     }
 
-    public void brewingStarted(ItemStack ingredient, Location brewingStandLocation){
-        Logger.warning("Brewing Started");
-    }
+    //public void brewingStarted(ItemStack ingredient, Location brewingStandLocation){
+    //    Logger.warning("Brewing Started");
+    //}
 
-    public void brewingFinished(List <ItemStack> results, Location brewingStandLocation) {
-        Logger.warning("Brewing Finished");
-    }
+    //public void brewingFinished(List <ItemStack> results, Location brewingStandLocation) {
+    //    Logger.warning("Brewing Finished");
+    //}
 
     public static List<String> getSubTypes() {
         return QuestsConfig.OTHER_QUEST.stream().map(Variant::getInternalName).collect(Collectors.toList());
@@ -215,7 +213,6 @@ public class OtherQuest extends Quest {
             try {
                 return DyeColor.valueOf(colorName);
             } catch (IllegalArgumentException ignored) {
-                // This will be thrown if the color name doesn't match the enum
             }
         }
         return null;

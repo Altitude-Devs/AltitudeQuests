@@ -172,12 +172,8 @@ public class QuestsConfig extends AbstractConfig {
         Set<String> keys = configurationSection.getKeys(false);
         for (String key : keys) {
             try {
-                if (configurationSection.getString(key + ".item") == null) {
-                    item = null;
-                }
-                else {
-                    item = Material.valueOf(configurationSection.getString(key + ".item"));
-                }
+                item = Material.valueOf(configurationSection.getString(key + ".item"));
+
                 if (configurationSection.getString(key + ".mob") == null) {
                     entityType = null;
                 }
@@ -203,8 +199,6 @@ public class QuestsConfig extends AbstractConfig {
             }
         }
         OTHER_QUEST_NAME = config.getString("other.name", OTHER_QUEST_NAME);
-        //OTHER_STEP_1 = config.getString("other.step-1", OTHER_STEP_1);
-        //OTHER_STEP_2 = config.getString("other.step-2", OTHER_STEP_2);
         OTHER_TURN_IN = config.getString("other.turn-in", OTHER_TURN_IN);
         OTHER_COMMANDS = config.getStringList("other.commands", OTHER_COMMANDS);
     }

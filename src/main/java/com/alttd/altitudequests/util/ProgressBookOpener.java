@@ -41,10 +41,6 @@ public class ProgressBookOpener {
                 dailyQuest.getTagResolvers()
         );
         List<String> pages = new ArrayList<>();
-//        if (dailyQuest.isDone())
-//            pages.addAll(dailyQuest.getDonePages());
-//        else
-//            pages.addAll(dailyQuest.getQuestPages());
         pages.addAll(Config.PROGRESS_PAGES);
         return (pages.stream()
                 .map(page -> miniMessage.deserialize(page, tagResolver))

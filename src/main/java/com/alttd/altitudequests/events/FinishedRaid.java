@@ -22,7 +22,7 @@ public class FinishedRaid implements Listener {
             if (dailyQuest == null || dailyQuest.isDone()) {
                 return;
             }
-            if (dailyQuest instanceof OtherQuest otherQuest) {  // check if dailyQuest.getVariant().getName()) == Raidquest
+            if (dailyQuest instanceof OtherQuest otherQuest) {
                 otherQuest.raid();
             }
         }
