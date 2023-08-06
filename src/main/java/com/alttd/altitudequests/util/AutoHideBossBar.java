@@ -9,39 +9,57 @@ import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitScheduler;
 
-public class AutoHideBossBar extends BukkitRunnable {
+import java.time.Instant;
+
+public class AutoHideBossBar implements Runnable {
 
     private final BossBar bossBar;
+    private final Thread thread = new Thread(this);
+    private Instant endTime;
 
-    public AutoHideBossBar(Player player, Variant variant, String suffix) throws Exception {
-        NamespacedKey namespacedKeyOne = NamespacedKey.fromString(player.getUniqueId() + variant.getInternalName() + suffix, AQuest.getInstance());
+    public AutoHideBossBar(Player player, Variant variant, String part, String title, BarColor barColor) throws Exception {
+        NamespacedKey namespacedKeyOne = NamespacedKey.fromString(player.getUniqueId() + variant.getInternalName() + part, AQuest.getInstance());
         if (namespacedKeyOne == null) {
-            Logger.warning("Unable to create nameSpacedKey with suffix % for quest for %", suffix, player.getName());
+            Logger.warning("Unable to create nameSpacedKey with suffix % for quest for %", part, player.getName());
             throw new Exception("Failed to create namespace key");
         }
         this.bossBar = Bukkit.createBossBar(
                 namespacedKeyOne,
-                "Step One Progress",
-                BarColor.GREEN,
+                title,
+                barColor,
                 BarStyle.SOLID);
         bossBar.setVisible(false);
         bossBar.addPlayer(player);
     }
 
+    private synchronized void schedule() {
+        endTime = Instant.now().plusSeconds(Config.BOSS_BAR_AUTO_HIDE.toSeconds());
+        if (!thread.isAlive())
+            thread.start();
+    }
+
     public void show(double progress) {
-        BukkitScheduler scheduler = Bukkit.getScheduler();
-        if (scheduler.isQueued(this.getTaskId()))
-            scheduler.cancelTask(this.getTaskId());
         bossBar.setVisible(true);
         bossBar.setProgress(progress);
-        this.runTaskLater(AQuest.getInstance(), Config.BOSS_BAR_AUTO_HIDE.getSeconds() * 20);
+        schedule();
+    }
+
+    private synchronized boolean waitOrRunTask() {
+        if (Instant.now().isBefore(endTime))
+            return true;
+        bossBar.setVisible(false);
+        return false;
     }
 
     @Override
     public void run() {
-        bossBar.setVisible(false);
+        while (waitOrRunTask()) {
+            try {
+                wait(100);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 }

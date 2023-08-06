@@ -13,6 +13,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Bukkit;
+import org.bukkit.boss.BarColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -50,10 +51,8 @@ public abstract class Quest {
     private boolean isDone;
     private boolean rewardReceived;
     private final int amount;
-    //    private final BossBar barProgressOne;
-//    private final BossBar barProgressTwo;
-    private final AutoHideBossBar barProgressOne;
-    private final AutoHideBossBar barProgressTwo;
+//    private final AutoHideBossBar barProgressOne;
+//    private final AutoHideBossBar barProgressTwo;
 
     public static synchronized void putDailyQuest(UUID uuid, Quest quest) {
         dailyQuests.put(uuid, quest);
@@ -94,8 +93,8 @@ public abstract class Quest {
             this.amount = variant.calculateAmount(loadQuestsDoneThisMonth(uuid));
         else
             this.amount = amount;
-        this.barProgressOne = new AutoHideBossBar(player, variant, "1");
-        this.barProgressTwo = new AutoHideBossBar(player, variant, "2");
+//        this.barProgressOne = new AutoHideBossBar(player, variant, "1", "Step One Progress", BarColor.GREEN);
+//        this.barProgressTwo = new AutoHideBossBar(player, variant, "2", "Step Two Progress", BarColor.PURPLE);
     }
 
     private int loadQuestsDoneThisMonth(UUID uuid) {
@@ -184,6 +183,7 @@ public abstract class Quest {
         Class<? extends Quest> aClass = any.get();
         Constructor<? extends Quest> constructor;
         try {
+            Player player = Bukkit.getPlayer(uuid);
             if (Config.DEBUG) {
                 Logger.info("quest: %, uuid: %, step1: %, step2: %, variant: %, amount: %, turnedIn:%",
                         quest,
@@ -194,8 +194,8 @@ public abstract class Quest {
                         String.valueOf(amount),
                         String.valueOf(turnedIn));
             }
-            constructor = aClass.getConstructor(UUID.class, int.class, int.class, String.class, int.class, boolean.class);
-            Quest quest1 = constructor.newInstance(uuid, step_1_progress, step_2_progress, quest_variant, amount, turnedIn);
+            constructor = aClass.getConstructor(Player.class, int.class, int.class, String.class, int.class, boolean.class);
+            Quest quest1 = constructor.newInstance(player, step_1_progress, step_2_progress, quest_variant, amount, turnedIn);
             putDailyQuest(uuid, quest1);
         } catch (NoSuchMethodException | IllegalAccessException | InstantiationException |
                  InvocationTargetException e) {
@@ -303,7 +303,7 @@ public abstract class Quest {
 
     public void addStep1(int step1) {
         this.step1 += step1;
-        barProgressOne.show(((double) getAmount()) / getStep1());
+//        barProgressOne.show(((double) getStep1()) / getAmount());
     }
 
     public int getStep2() {
@@ -312,7 +312,7 @@ public abstract class Quest {
 
     public void addStep2(int step2) {
         this.step2 += step2;
-        barProgressTwo.show(((double) getAmount()) / getStep2());
+//        barProgressTwo.show(((double) getStep2()) / getAmount());
     }
 
     public void setDone(boolean done) {
