@@ -25,8 +25,8 @@ public class KillMobsQuest extends Quest {
 
     private final KillMobsQuestObject killMobsQuestObject;
 
-    public KillMobsQuest(UUID uuid) {
-        super(uuid, 0, 0,
+    public KillMobsQuest(Player player) throws Exception {
+        super(player, 0, 0,
                 QuestsConfig.KILL_MOB_QUEST.get(Utilities.randomOr0(QuestsConfig.KILL_MOB_QUEST.size() - 1)), -1, false);
         if (getVariant() instanceof KillMobsQuestObject killMobsQuestObject)
             this.killMobsQuestObject = killMobsQuestObject;
@@ -38,8 +38,8 @@ public class KillMobsQuest extends Quest {
         }
     }
 
-    public KillMobsQuest(UUID uuid, int step1, int step2, String variant, int amount, boolean rewardReceived) {
-        super(uuid, step1, step2, QuestsConfig.KILL_MOB_QUEST.stream()
+    public KillMobsQuest(Player player, int step1, int step2, String variant, int amount, boolean rewardReceived) throws Exception {
+        super(player, step1, step2, QuestsConfig.KILL_MOB_QUEST.stream()
                 .filter(object -> variant.equals(object.getInternalName()))
                 .findAny().orElse(null), amount, rewardReceived);
         if (getVariant() instanceof KillMobsQuestObject killMobsQuestObject)

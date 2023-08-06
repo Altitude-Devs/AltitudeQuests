@@ -25,15 +25,14 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class OtherQuest extends Quest {
 
     private final OtherQuestObject otherQuestObject;
 
-    public OtherQuest(UUID uuid) {
-        super(uuid, 0, 0,
+    public OtherQuest(Player player) throws Exception {
+        super(player, 0, 0,
                 QuestsConfig.OTHER_QUEST.get(Utilities.randomOr0(QuestsConfig.OTHER_QUEST.size() - 1)), -1, false);
         if (getVariant() instanceof OtherQuestObject otherQuestObject)
             this.otherQuestObject = otherQuestObject;
@@ -41,12 +40,11 @@ public class OtherQuest extends Quest {
             this.otherQuestObject = null;
         if (otherQuestObject == null) {
             Logger.warning("Tried to create OtherQuest but unable to find variant: %.", "unknown");
-            return;
         }
     }
 
-    public OtherQuest(UUID uuid, int step1, int step2, String variant, int amount, boolean rewardReceived) {
-        super(uuid, step1, step2, QuestsConfig.OTHER_QUEST.stream()
+    public OtherQuest(Player player, int step1, int step2, String variant, int amount, boolean rewardReceived) throws Exception {
+        super(player, step1, step2, QuestsConfig.OTHER_QUEST.stream()
                 .filter(object -> variant.equals(object.getInternalName()))
                 .findAny().orElse(null), amount, rewardReceived);
         if (getVariant() instanceof OtherQuestObject otherQuestObject)
@@ -148,7 +146,7 @@ public class OtherQuest extends Quest {
 
     @Override
     public Component getDisplayName() {
-        return MiniMessage.miniMessage().deserialize("<green>%s</green>".formatted( otherQuestObject.getCategory()));
+        return MiniMessage.miniMessage().deserialize("<green>%s</green>".formatted(otherQuestObject.getCategory()));
     }
 
     @Override
@@ -156,7 +154,7 @@ public class OtherQuest extends Quest {
         return QuestsConfig.COLLECT_DROPS_COMMANDS;
     }
 
-    public void fish(ItemStack caughtItem){
+    public void fish(ItemStack caughtItem) {
         if (isDone() || !caughtItem.getType().equals(otherQuestObject.getMaterial()) || getAmount() == getStep1()) {
             return;
         }
@@ -169,8 +167,7 @@ public class OtherQuest extends Quest {
             return;
         }
         DyeColor color = getDyeColorFromItemStack(otherQuestObject.getMaterial());
-        if (entity instanceof Sheep) {
-            Sheep sheep = (Sheep) entity;
+        if (entity instanceof Sheep sheep) {
             if (sheep.getColor() != color) {
                 return;
             }
@@ -187,7 +184,7 @@ public class OtherQuest extends Quest {
         checkDone();
     }
 
-    public void raid(){
+    public void raid() {
         if (isDone() || getAmount() == getStep1() || !Objects.equals(otherQuestObject.getCategory(), "Raid")) { //without checking the category, other players who have otherQuests active will also have a step added
             return;
         }

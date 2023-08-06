@@ -28,8 +28,8 @@ public class CollectDropsQuest extends Quest {
 
     private final CollectDropsQuestObject collectDropsQuestObject;
 
-    public CollectDropsQuest(UUID uuid) {
-        super(uuid, 0, 0,
+    public CollectDropsQuest(Player player) throws Exception {
+        super(player, 0, 0,
                 QuestsConfig.COLLECT_DROPS_QUEST.get(Utilities.randomOr0(QuestsConfig.COLLECT_DROPS_QUEST.size() - 1)), -1, false);
         if (getVariant() instanceof CollectDropsQuestObject collectDropsQuestObject)
             this.collectDropsQuestObject = collectDropsQuestObject;
@@ -41,8 +41,8 @@ public class CollectDropsQuest extends Quest {
         }
     }
 
-    public CollectDropsQuest(UUID uuid, int step1, int step2, String variant, int amount, boolean rewardReceived) {
-        super(uuid, step1, step2, QuestsConfig.COLLECT_DROPS_QUEST.stream()
+    public CollectDropsQuest(Player player, int step1, int step2, String variant, int amount, boolean rewardReceived) throws Exception {
+        super(player, step1, step2, QuestsConfig.COLLECT_DROPS_QUEST.stream()
                 .filter(object -> variant.equals(object.getInternalName()))
                 .findAny().orElse(null), amount, rewardReceived);
         if (getVariant() instanceof CollectDropsQuestObject collectDropsQuestObject)

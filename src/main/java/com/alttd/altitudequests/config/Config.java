@@ -1,10 +1,10 @@
 package com.alttd.altitudequests.config;
 
 import java.io.File;
+import java.time.Duration;
 import java.util.List;
 
 public final class Config extends AbstractConfig {
-
     static Config config;
     static int version;
     public Config() {
@@ -58,9 +58,11 @@ public final class Config extends AbstractConfig {
 
     public static String NPC_NAME = "<light_purple>Scruff</light_purple>";
     public static boolean DEBUG = false;
+    public static Duration BOSS_BAR_AUTO_HIDE;
     private static void loadSettings() {
         NPC_NAME = config.getString("settings.npc-name", NPC_NAME);
         DEBUG = config.getBoolean("settings.debug", DEBUG);
+        BOSS_BAR_AUTO_HIDE = Duration.ofSeconds(config.getInt("settings.boss-bar-auto-hide-seconds", 10));
     }
 
     public static int MINE_QUEST_FREQ = 1;

@@ -5,6 +5,7 @@ import com.alttd.altitudequests.config.Config;
 import com.alttd.altitudequests.config.MessagesConfig;
 import com.alttd.altitudequests.database.Database;
 import com.alttd.altitudequests.objects.quests.*;
+import com.alttd.altitudequests.util.AutoHideBossBar;
 import com.alttd.altitudequests.util.Logger;
 import com.alttd.altitudequests.util.Utilities;
 import com.alttd.datalock.DataLockAPI;
@@ -26,7 +27,7 @@ import java.util.stream.Collectors;
 public abstract class Quest {
 
     private static final HashMap<UUID, Quest> dailyQuests = new HashMap<>();
-//    private static Quest weeklyQuest = null;
+    //    private static Quest weeklyQuest = null;
     private static final List<Class<? extends Quest>> possibleQuests = new ArrayList<>();
 
     static { // maybe make this make more sense idk
@@ -49,6 +50,10 @@ public abstract class Quest {
     private boolean isDone;
     private boolean rewardReceived;
     private final int amount;
+    //    private final BossBar barProgressOne;
+//    private final BossBar barProgressTwo;
+    private final AutoHideBossBar barProgressOne;
+    private final AutoHideBossBar barProgressTwo;
 
     public static synchronized void putDailyQuest(UUID uuid, Quest quest) {
         dailyQuests.put(uuid, quest);
@@ -74,8 +79,8 @@ public abstract class Quest {
         dailyQuests.clear();
     }
 
-    public Quest(UUID uuid, int step1, int step2, Variant variant, int amount, boolean rewardReceived) {
-        this.uuid = uuid;
+    public Quest(Player player, int step1, int step2, Variant variant, int amount, boolean rewardReceived) throws Exception {
+        this.uuid = player.getUniqueId();
         this.step1 = step1;
         this.step2 = step2;
         this.variant = variant;
@@ -83,11 +88,14 @@ public abstract class Quest {
         this.rewardReceived = rewardReceived;
         if (variant == null) {
             Logger.warning("Created % quest without a variant for %", this.getClass().getName(), uuid.toString());
+            throw new Exception("Invalid variant");
         }
-        if (variant != null && amount == -1)
+        if (amount == -1)
             this.amount = variant.calculateAmount(loadQuestsDoneThisMonth(uuid));
         else
             this.amount = amount;
+        this.barProgressOne = new AutoHideBossBar(player, variant, "1");
+        this.barProgressTwo = new AutoHideBossBar(player, variant, "2");
     }
 
     private int loadQuestsDoneThisMonth(UUID uuid) {
@@ -116,12 +124,17 @@ public abstract class Quest {
 
         Class<? extends Quest> questClass = possibleQuests.get(Utilities.randomOr0(possibleQuests.size() - 1));
         try {
-            Constructor<? extends Quest> constructor = questClass.getDeclaredConstructor(UUID.class);
-            putDailyQuest(player.getUniqueId(), constructor.newInstance(player.getUniqueId()));
-        } catch (InvocationTargetException | IllegalAccessException | InstantiationException | NoSuchMethodException e) {
+            Constructor<? extends Quest> constructor = questClass.getDeclaredConstructor(Player.class);
+            putDailyQuest(player.getUniqueId(), constructor.newInstance(player));
+        } catch (InvocationTargetException | IllegalAccessException | InstantiationException |
+                 NoSuchMethodException e) {
             player.sendMiniMessage("<red>Unable to create quest, contact an admin</red>", null);
             e.printStackTrace();
-            Logger.severe("% does not have a constructor with a UUID input or has improper access.", questClass.getName());
+            Logger.severe("% does not have a constructor with a Player input or has improper access.", questClass.getName());
+        } catch (Exception e) {
+            player.sendMiniMessage("<red>Unable to create quest, contact an admin</red>", null);
+            e.printStackTrace();
+            Logger.severe("% could not be created due to invalid namespace key or variant.", questClass.getName());
         }
     }
 
@@ -129,7 +142,7 @@ public abstract class Quest {
 //        Quest.weeklyQuest = newQuest;
 //    }
 
-//    private static final HashSet<UUID> queriedUsers = new HashSet<>();
+    //    private static final HashSet<UUID> queriedUsers = new HashSet<>();
     public static void tryLoadDailyQuest(UUID uuid) {
 //        if (queriedUsers.contains(uuid))
 //            return;
@@ -184,7 +197,8 @@ public abstract class Quest {
             constructor = aClass.getConstructor(UUID.class, int.class, int.class, String.class, int.class, boolean.class);
             Quest quest1 = constructor.newInstance(uuid, step_1_progress, step_2_progress, quest_variant, amount, turnedIn);
             putDailyQuest(uuid, quest1);
-        } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
+        } catch (NoSuchMethodException | IllegalAccessException | InstantiationException |
+                 InvocationTargetException e) {
             e.printStackTrace();
             return false;
         }
@@ -289,6 +303,7 @@ public abstract class Quest {
 
     public void addStep1(int step1) {
         this.step1 += step1;
+        barProgressOne.show(((double) getAmount()) / getStep1());
     }
 
     public int getStep2() {
@@ -297,6 +312,7 @@ public abstract class Quest {
 
     public void addStep2(int step2) {
         this.step2 += step2;
+        barProgressTwo.show(((double) getAmount()) / getStep2());
     }
 
     public void setDone(boolean done) {

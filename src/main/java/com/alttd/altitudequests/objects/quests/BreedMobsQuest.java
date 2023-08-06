@@ -18,15 +18,14 @@ import org.bukkit.entity.Player;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class BreedMobsQuest extends Quest {
 
     private final BreedMobsQuestObject breedMobsQuestObject;
 
-    public BreedMobsQuest(UUID uuid) {
-        super(uuid, 0, 0,
+    public BreedMobsQuest(Player player) throws Exception {
+        super(player, 0, 0,
                 QuestsConfig.BREED_MOB_QUEST.get(Utilities.randomOr0(QuestsConfig.BREED_MOB_QUEST.size() - 1)), -1, false);
         if (getVariant() instanceof BreedMobsQuestObject breedMobsQuestObject)
             this.breedMobsQuestObject = breedMobsQuestObject;
@@ -38,8 +37,8 @@ public class BreedMobsQuest extends Quest {
         }
     }
 
-    public BreedMobsQuest(UUID uuid, int step1, int step2, String variant, int amount, boolean rewardReceived) {
-        super(uuid, step1, step2, QuestsConfig.BREED_MOB_QUEST.stream()
+    public BreedMobsQuest(Player player, int step1, int step2, String variant, int amount, boolean rewardReceived) throws Exception {
+        super(player, step1, step2, QuestsConfig.BREED_MOB_QUEST.stream()
                 .filter(object -> variant.equals(object.getInternalName()))
                 .findAny().orElse(null), amount, rewardReceived);
         if (getVariant() instanceof BreedMobsQuestObject breedMobsQuestObject)

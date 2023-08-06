@@ -27,8 +27,8 @@ public class MineQuest extends Quest {
 
     private final MineQuestObject mineQuestObject;
 
-    public MineQuest(UUID uuid) {
-        super(uuid, 0, 0,
+    public MineQuest(Player player) throws Exception {
+        super(player, 0, 0,
             QuestsConfig.MINE_QUESTS.get(Utilities.randomOr0(QuestsConfig.MINE_QUESTS.size() - 1)), -1, false);
         if (getVariant() instanceof MineQuestObject mineQuestObject)
             this.mineQuestObject = mineQuestObject;
@@ -40,8 +40,8 @@ public class MineQuest extends Quest {
         }
     }
 
-    public MineQuest(UUID uuid, int mined, int turnedIn, String variant, int amount, boolean rewardReceived) {
-        super(uuid, mined, turnedIn, QuestsConfig.MINE_QUESTS.stream()
+    public MineQuest(Player player, int mined, int turnedIn, String variant, int amount, boolean rewardReceived) throws Exception {
+        super(player, mined, turnedIn, QuestsConfig.MINE_QUESTS.stream()
                 .filter(object -> variant.equals(object.getInternalName()))
                 .findAny().orElse(null), amount,
                 rewardReceived);
