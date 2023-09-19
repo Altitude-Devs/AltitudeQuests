@@ -155,7 +155,7 @@ public class OtherQuest extends Quest {
     }
 
     public void fish(ItemStack caughtItem) {
-        if (isDone() || !caughtItem.getType().equals(otherQuestObject.getMaterial()) || getAmount() == getStep1()) {
+        if (isDone() || !caughtItem.getType().equals(otherQuestObject.getMaterial()) || getAmount() == getStep1()|| !otherQuestObject.getCategory().equalsIgnoreCase("FISHING")) {
             return;
         }
         addStep1(1);
@@ -163,7 +163,7 @@ public class OtherQuest extends Quest {
     }
 
     public void shear(Entity entity) {
-        if (isDone() || !entity.getType().equals(otherQuestObject.getEntity()) || getAmount() == getStep1()) {
+        if (isDone() || !entity.getType().equals(otherQuestObject.getEntity()) || getAmount() == getStep1()|| !otherQuestObject.getCategory().equalsIgnoreCase("SHEARING")) {
             return;
         }
         DyeColor color = getDyeColorFromItemStack(otherQuestObject.getMaterial());
@@ -177,7 +177,7 @@ public class OtherQuest extends Quest {
     }
 
     public void bucket(ItemStack bucket, Entity entity) {
-        if (isDone() || !entity.getType().equals(otherQuestObject.getEntity()) || getAmount() == getStep1()) {
+        if (isDone() || !entity.getType().equals(otherQuestObject.getEntity()) || getAmount() == getStep1()|| !otherQuestObject.getCategory().equalsIgnoreCase("BUCKETING")) {
             return;
         }
         addStep1(1);
@@ -185,7 +185,7 @@ public class OtherQuest extends Quest {
     }
 
     public void raid() {
-        if (isDone() || getAmount() == getStep1() || !Objects.equals(otherQuestObject.getCategory(), "Raid")) { //without checking the category, other players who have otherQuests active will also have a step added
+        if (isDone() || getAmount() == getStep1() || !otherQuestObject.getCategory().equalsIgnoreCase("RAID")) { //without checking the category, other players who have otherQuests active will also have a step added
             return;
         }
         addStep1(1);

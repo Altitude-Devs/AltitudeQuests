@@ -5,18 +5,17 @@ import com.alttd.altitudequests.config.Config;
 import com.alttd.altitudequests.config.MessagesConfig;
 import com.alttd.altitudequests.database.Database;
 import com.alttd.altitudequests.objects.quests.*;
-import com.alttd.altitudequests.util.AutoHideBossBar;
 import com.alttd.altitudequests.util.Logger;
 import com.alttd.altitudequests.util.Utilities;
+import com.alttd.altitudequests.util.AutoHideBossBar;
+import org.bukkit.boss.BarColor;
 import com.alttd.datalock.DataLockAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Bukkit;
-import org.bukkit.boss.BarColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.PreparedStatement;
@@ -51,8 +50,8 @@ public abstract class Quest {
     private boolean isDone;
     private boolean rewardReceived;
     private final int amount;
-//    private final AutoHideBossBar barProgressOne;
-//    private final AutoHideBossBar barProgressTwo;
+    private final AutoHideBossBar barProgressOne;
+    private final AutoHideBossBar barProgressTwo;
 
     public static synchronized void putDailyQuest(UUID uuid, Quest quest) {
         dailyQuests.put(uuid, quest);
@@ -93,8 +92,8 @@ public abstract class Quest {
             this.amount = variant.calculateAmount(loadQuestsDoneThisMonth(uuid));
         else
             this.amount = amount;
-//        this.barProgressOne = new AutoHideBossBar(player, variant, "1", "Step One Progress", BarColor.GREEN);
-//        this.barProgressTwo = new AutoHideBossBar(player, variant, "2", "Step Two Progress", BarColor.PURPLE);
+        this.barProgressOne = new AutoHideBossBar(player, variant, "1", "Step One Progress", BarColor.GREEN);
+        this.barProgressTwo = new AutoHideBossBar(player, variant, "2", "Step Two Progress", BarColor.PURPLE);
     }
 
     private int loadQuestsDoneThisMonth(UUID uuid) {
@@ -303,7 +302,7 @@ public abstract class Quest {
 
     public void addStep1(int step1) {
         this.step1 += step1;
-//        barProgressOne.show(((double) getStep1()) / getAmount());
+        barProgressOne.show(((double) getStep1()) / getAmount());
     }
 
     public int getStep2() {
@@ -312,7 +311,7 @@ public abstract class Quest {
 
     public void addStep2(int step2) {
         this.step2 += step2;
-//        barProgressTwo.show(((double) getStep2()) / getAmount());
+        barProgressTwo.show(((double) getStep2()) / getAmount());
     }
 
     public void setDone(boolean done) {

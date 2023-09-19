@@ -4,6 +4,7 @@ import com.alttd.altitudequests.commands.CommandManager;
 import com.alttd.altitudequests.config.*;
 import com.alttd.altitudequests.events.*;
 import com.alttd.altitudequests.objects.Quest;
+import com.alttd.altitudequests.util.AutoHideBossBar;
 import com.alttd.altitudequests.util.Logger;
 import com.alttd.altitudequests.util.Utilities;
 import com.alttd.datalock.DataLockAPI;
@@ -37,6 +38,7 @@ public final class AQuest extends JavaPlugin {
         } else {
             dataLockAPI.registerChannel("aquest:player-data");
         }
+        AutoHideBossBar.initiate();
 
         Logger.info("--------------------------------------------------");
         Logger.info("AQuest started");
