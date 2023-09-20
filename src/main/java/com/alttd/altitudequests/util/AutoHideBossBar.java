@@ -21,10 +21,10 @@ public class AutoHideBossBar {
     private final BossBar bossBar;
 
     public AutoHideBossBar(Player player, Variant variant, String part, String title, BarColor barColor) throws Exception {
-        NamespacedKey namespacedKeyOne = NamespacedKey.fromString(player.getUniqueId() + variant.getInternalName() + part, AQuest.getInstance());
+        NamespacedKey namespacedKeyOne = NamespacedKey.fromString(player.getUniqueId() + variant.getInternalName().toLowerCase() + part, AQuest.getInstance());
         if (namespacedKeyOne == null) {
             Logger.warning("Unable to create nameSpacedKey with suffix % for quest for %", part, player.getName());
-            throw new Exception("Failed to create namespace key"); //quest names containing upper case letters can cause this
+            throw new Exception("Failed to create namespace key");
         }
         this.bossBar = Bukkit.createBossBar(
                 namespacedKeyOne,
